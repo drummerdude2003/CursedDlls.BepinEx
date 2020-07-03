@@ -12,10 +12,7 @@ namespace RemoveMagCheck
     {
         private void Awake()
         {
-            Environment.SetEnvironmentVariable("MONOMOD_DMD_TYPE", "cecil");
-            Environment.SetEnvironmentVariable("MONOMOD_DMD_DUMP", "./mmdump");
             Harmony.CreateAndPatchAll(typeof(RemoveMagCheckPlugin));
-            Environment.SetEnvironmentVariable("MONOMOD_DMD_DUMP", null);
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "FVRFixedUpdate")]
