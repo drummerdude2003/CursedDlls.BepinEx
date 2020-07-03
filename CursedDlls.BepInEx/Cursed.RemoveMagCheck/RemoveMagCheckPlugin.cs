@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection.Emit;
 using BepInEx;
 using FistVR;
 using HarmonyLib;
+
+// TODO: Simplify patches, since right now they preserve the branches
 
 namespace RemoveMagCheck
 {
