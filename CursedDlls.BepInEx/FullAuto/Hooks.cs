@@ -27,7 +27,8 @@ namespace Cursed.FullAuto
             var full_auto = new ClosedBoltWeapon.FireSelectorMode
             {
                 ModeType = ClosedBoltWeapon.FireSelectorModeType.FullAuto,
-                SelectorPosition = __instance.FireSelector_Modes[__instance.FireSelector_Modes.Length - 1].SelectorPosition
+                SelectorPosition = __instance.FireSelector_Modes[__instance.FireSelector_Modes.Length - 1]
+                    .SelectorPosition
             };
             modes.Add(full_auto);
             __instance.FireSelector_Modes = modes.ToArray();
@@ -39,7 +40,8 @@ namespace Cursed.FullAuto
         public static void PostAwake(Handgun __instance)
         {
             if (__instance.FireSelectorModes.Length == 0) return;
-            var hasFullAuto = __instance.FireSelectorModes.Any(t => t.ModeType == Handgun.FireSelectorModeType.FullAuto);
+            var hasFullAuto =
+                __instance.FireSelectorModes.Any(t => t.ModeType == Handgun.FireSelectorModeType.FullAuto);
 
             if (hasFullAuto) return;
             var fullAuto = new Handgun.FireSelectorMode
