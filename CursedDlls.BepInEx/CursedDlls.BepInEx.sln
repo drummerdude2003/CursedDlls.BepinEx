@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fullauto", "ClassLibrary1\Fullauto.csproj", "{1A516EE9-D325-438B-AE5E-ECC3F5F24490}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fullauto", "FullAuto\Fullauto.csproj", "{1A516EE9-D325-438B-AE5E-ECC3F5F24490}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
