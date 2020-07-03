@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 using BepInEx;
 using FistVR;
@@ -11,7 +12,10 @@ namespace RemoveMagCheck
     {
         private void Awake()
         {
+            Environment.SetEnvironmentVariable("MONOMOD_DMD_TYPE", "cecil");
+            Environment.SetEnvironmentVariable("MONOMOD_DMD_DUMP", "./mmdump");
             Harmony.CreateAndPatchAll(typeof(RemoveMagCheckPlugin));
+            Environment.SetEnvironmentVariable("MONOMOD_DMD_DUMP", null);
         }
 
         [HarmonyPatch(typeof(FVRFireArmMagazine), "FVRFixedUpdate")]
@@ -23,13 +27,13 @@ namespace RemoveMagCheck
                     new CodeMatch(OpCodes.Ldloc_0),
                     new CodeMatch(OpCodes.Ldfld,
                         AccessTools.Field(typeof(FVRFireArm), nameof(FVRFireArm.MagazineType))),
-                    new CodeMatch(OpCodes.Ldloc_0),
+                    new CodeMatch(OpCodes.Ldarg_0),
                     new CodeMatch(OpCodes.Ldfld,
                         AccessTools.Field(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.MagazineType))))
-                .RemoveInstructions(4)
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldc_I4_0),
-                    new CodeInstruction(OpCodes.Ldc_I4_0)).InstructionEnumeration();
+                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
+                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
+                .SetAndAdvance(OpCodes.Nop, null)
+                .SetAndAdvance(OpCodes.Nop, null).InstructionEnumeration();
         }
 
         [HarmonyPatch(typeof(FVRFireArmReloadTriggerMag), "OnTriggerEnter")]
@@ -45,10 +49,10 @@ namespace RemoveMagCheck
                             nameof(FVRFireArmReloadTriggerMag.Magazine))),
                     new CodeMatch(OpCodes.Ldfld,
                         AccessTools.Field(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.MagazineType))))
-                .RemoveInstructions(4)
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldc_I4_0),
-                    new CodeInstruction(OpCodes.Ldc_I4_0)).InstructionEnumeration();
+                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
+                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
+                .SetAndAdvance(OpCodes.Nop, null)
+                .SetAndAdvance(OpCodes.Nop, null).InstructionEnumeration();
         }
     }
 }
