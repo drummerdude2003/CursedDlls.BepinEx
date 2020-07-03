@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.FullAuto", "FullAuto\Cursed.FullAuto.csproj", "{1A516EE9-D325-438B-AE5E-ECC3F5F24490}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.RemoveMagCheck", "Cursed.RemoveMagCheck\Cursed.RemoveMagCheck.csproj", "{ECA4D74A-B8F6-436F-A0B1-308A9AA10BE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.FullAuto", "Cursed.FullAuto\Cursed.FullAuto.csproj", "{1A516EE9-D325-438B-AE5E-ECC3F5F24490}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ECA4D74A-B8F6-436F-A0B1-308A9AA10BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ECA4D74A-B8F6-436F-A0B1-308A9AA10BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA4D74A-B8F6-436F-A0B1-308A9AA10BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA4D74A-B8F6-436F-A0B1-308A9AA10BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A516EE9-D325-438B-AE5E-ECC3F5F24490}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
