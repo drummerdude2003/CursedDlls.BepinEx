@@ -42,10 +42,10 @@ Makes all closed bolt rifles and handguns act as full-auto.
 This change makes any magazine usable on any gun. Why not?
 
 
-### `Cursed.TimeScale` -- handles voice pitching according to time scale
+### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
-When slowing down time, scales the pitch of sounds to be lower to simulate 
-slowdown as well.
+Allows to slow down time using the snapturning buttons. When time is slowed down, 
+sounds are pitched down as well.
 
 
 ## Credits
