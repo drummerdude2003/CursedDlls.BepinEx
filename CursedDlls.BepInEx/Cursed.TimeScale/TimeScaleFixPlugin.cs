@@ -16,7 +16,6 @@ namespace Cursed.TimeScale
         [HarmonyPrefix]
         public static void FixPitch(ref float value)
         {
-            Debug.Log("Fixing pitch to match timescale");
             value *= Time.timeScale;
         }
     }
