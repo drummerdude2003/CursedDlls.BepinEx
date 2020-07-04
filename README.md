@@ -41,6 +41,9 @@ Makes all closed bolt rifles and handguns act as full-auto.
 
 This change makes any magazine usable on any gun. Why not?
 
+### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
+
+Carrots in an SMG? Oh my!
 
 ### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
