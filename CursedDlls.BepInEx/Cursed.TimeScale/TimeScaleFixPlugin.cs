@@ -8,7 +8,7 @@ using Valve.VR;
 
 namespace Cursed.TimeScale
 {
-    [BepInPlugin("dll.cursed.timescalefix", "Time scaler", "1.0")]
+    [BepInPlugin("dll.cursed.timescale", "Time scaler", "1.0")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;

@@ -47,6 +47,9 @@ This change makes any magazine usable on any gun. Why not?
 Allows to slow down time using the snapturning buttons. When time is slowed down, 
 sounds are pitched down as well.
 
+You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
+`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg`.
+
 
 ## Credits
 
