@@ -11,8 +11,44 @@ The main benefits of this collection are
 
 ## Installation
 
-WIP
+This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- 
+a Unity plugin framework that comes prepackaged with necessary tools for modding.
+
+To install, do the following:
+
+1. Grab latest version of BepInEx [from releases](https://github.com/BepInEx/BepInEx/releases). Pick the `x64` version.
+2. Extract the downloaded zip into H3VR game folder (`<STEAM folder>/steamapps/common/H3VR`) so that `winhttp.dll` is next to `h3vr.exe`
+      * It's recommended that you run the game now *at least once*. That way BepInEx initializes all the folders and configuration files.
+      * *Optional* Enable the debug console by opening `<H3VR folder>/BepInEx/config/BepInEx.cfg`, finding and setting
+         ```toml
+         [Logging.Console]
+
+         Enabled = true
+         ```
+3. Download latest set of Cursed.dll plugins from [releases](https://github.com/drummerdude2003/CursedDlls.BepinEx/releases)
+4. Open the downloaded zip. Pick the plugins you want (**check the descriptions below**) and put them into `<H3VR folder>/BepInEx/plugins` folder.
+5. Run the game and enjoy the madness
+
 
 ## Plugin descriptions
 
-WIP
+### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
+
+Makes all closed bolt rifles and handguns act as full-auto.
+
+
+### `Cursed.RemoveMagCheck` -- allows any magazine to be used on any gun
+
+This change makes any magazine usable on any gun. Why not?
+
+
+### `Cursed.TimeScale` -- handles voice pitching according to time scale
+
+When slowing down time, scales the pitch of sounds to be lower to simulate 
+slowdown as well.
+
+
+## Credits
+
+* [drummerdude2003](https://github.com/drummerdude2003) -- original work
+* [denikson](https://github.com/denikson) -- help with porting patches over to Harmony
