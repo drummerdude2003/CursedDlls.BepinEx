@@ -47,10 +47,7 @@ namespace Cursed.TimeScale
         [HarmonyPostfix]
         public static void UpdateTimeScaleText(FVRWristMenu __instance, bool ___m_isActive)
         {
-            if (___m_isActive)
-            {
-                __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
-            }
+            if (___m_isActive) __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
         }
 
         private static void DiffTimeScale(FVRWristMenu self, int dir)
