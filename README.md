@@ -52,7 +52,7 @@ This change makes any magazine usable on any gun. Why not?
 
 #### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
 
-Potatoes in an SMG? Oh my! (Note Stripper Clips and SpeedLoaders are currently broken.)
+Potatos in an SMG? Oh my! (Note Stripper Clips and SpeedLoaders are currently broken. Yes the 6Twelve is broken to *all* hell with this)
 
 #### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
@@ -62,7 +62,7 @@ sounds are pitched down as well.
 You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
 `<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg` (you need to run the game at least once for it to be generated).
 
-#### `Cursed.UnlockAll` -- unlocks all item spawners, rewards and whatnot
+#### `Cursed.UnlockAll` -- unlocks all Rewards, puts non-item spawner items into the item spawner
 
 Should be rather explanatory, have fun. Found under Misc>Backpacks
 
