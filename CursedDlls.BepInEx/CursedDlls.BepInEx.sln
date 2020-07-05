@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.RemoveRoundTypeCheck
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.UnlockAll", "Cursed.UnlockAll\Cursed.UnlockAll.csproj", "{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.RemoveAttachmentChecks", "Cursed.RemoveAttachmentChecks\Cursed.RemoveAttachmentChecks.csproj", "{121345A5-E543-4E05-8207-AD78005AA535}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{121345A5-E543-4E05-8207-AD78005AA535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{121345A5-E543-4E05-8207-AD78005AA535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{121345A5-E543-4E05-8207-AD78005AA535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{121345A5-E543-4E05-8207-AD78005AA535}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
