@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.TimeScale", "Cursed.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.RemoveRoundTypeCheck", "Cursed.RemoveRoundTypeCheck\Cursed.RemoveRoundTypeCheck.csproj", "{63EE5053-E9F0-4871-BA6B-50E9B0273834}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.UnlockAll", "Cursed.UnlockAll\Cursed.UnlockAll.csproj", "{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{63EE5053-E9F0-4871-BA6B-50E9B0273834}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63EE5053-E9F0-4871-BA6B-50E9B0273834}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63EE5053-E9F0-4871-BA6B-50E9B0273834}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764CC0F1-0FDF-4530-BBC8-36549A9B99BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
