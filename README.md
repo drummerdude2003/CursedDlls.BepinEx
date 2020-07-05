@@ -32,20 +32,20 @@ To install, do the following:
 
 ## Plugin descriptions
 
-### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
+#### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
 
 Makes all closed bolt rifles and handguns act as full-auto.
 
 
-### `Cursed.RemoveMagCheck` -- allows any magazine to be used on any gun
+#### `Cursed.RemoveMagCheck` -- allows any magazine to be used on any gun
 
 This change makes any magazine usable on any gun. Why not?
 
-### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
+#### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
 
 Carrots in an SMG? Oh my!
 
-### `Cursed.TimeScale` -- allows to speed up or slow down the game
+#### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
 Allows to slow down time using the snapturning buttons. When time is slowed down, 
 sounds are pitched down as well.
@@ -53,6 +53,10 @@ sounds are pitched down as well.
 You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
 `<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg`.
 
+
+#### `Cursed.UnlockAll` -- unlocks all item spawners, rewards and whatnot
+
+Should be rather explanatory, have fun.
 
 ## Credits
 
