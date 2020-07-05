@@ -14,12 +14,6 @@ The main benefits of this collection are
 This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- 
 a Unity plugin framework that comes prepackaged with necessary tools for modding.
 
-### For the impatient:
-
-![Installation guide as GIF](install.gif)
-
-### Full guide:
-
 To install, do the following:
 
 1. Grab latest version of BepInEx [from releases](https://github.com/BepInEx/BepInEx/releases). Pick the `x64` version.
@@ -48,7 +42,7 @@ Makes all closed bolt rifles and handguns have a full auto safety setting. This 
 #### `Cursed.RemoveAttachmentChecks` -- removes checks related to attachments
 
 * All attachments are bi-directional
-* Bipods have remove recoil
+* Bipods have balanced recoil, more rearward than upward
 * You can apply any attachment on any weapon
 * There is no upper bound on the number of attachments per weapon
 
