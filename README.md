@@ -36,6 +36,12 @@ To install, do the following:
 
 Makes all closed bolt rifles and handguns act as full-auto.
 
+#### `Cursed.RemoveAttachmentChecks` -- removes checks related to attachments
+
+* All attachments are bi-directional
+* Bipods have remove recoil
+* You can apply any attachment on any weapon
+* There is no upper bound on the number of attachments per weapon
 
 #### `Cursed.RemoveMagCheck` -- allows any magazine to be used on any gun
 
