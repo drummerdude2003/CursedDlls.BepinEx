@@ -26,7 +26,7 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>none</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>../bin/BepInEx/plugins/CursedDlls</OutputPath>
+        <OutputPath>../../bin/BepInEx/plugins/CursedDlls</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
