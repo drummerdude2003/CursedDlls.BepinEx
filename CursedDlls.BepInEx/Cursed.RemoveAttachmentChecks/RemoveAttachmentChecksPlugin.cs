@@ -1,4 +1,6 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using System.Reflection.Emit;
+using BepInEx;
 using FistVR;
 using HarmonyLib;
 
@@ -32,6 +34,23 @@ namespace Cursed.RemoveAttachmentChecks
         public static void RemoveMaxAttachmentLimit(ref int ___m_maxAttachments)
         {
             ___m_maxAttachments = int.MaxValue;
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmAttachmentSensor), "OnTriggerEnter")]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> RemoveAttachmentCheck(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs)
+                .MatchForward(false,
+                    new CodeMatch(OpCodes.Ldarg_0),
+                    new CodeMatch(OpCodes.Ldfld),
+                    new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(FVRFireArmAttachment), "Type")),
+                    new CodeMatch(OpCodes.Bne_Un))
+                .SetAndAdvance(OpCodes.Pop, null)
+                .SetAndAdvance(OpCodes.Nop, null)
+                .SetAndAdvance(OpCodes.Nop, null)
+                .SetAndAdvance(OpCodes.Nop, null)
+                .InstructionEnumeration();
         }
     }
 }
