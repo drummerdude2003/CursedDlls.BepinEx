@@ -35,7 +35,9 @@ To install, do the following:
 
 #### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
 
-Makes all closed bolt rifles and handguns act as full-auto.
+Makes all closed bolt rifles and handguns have a full auto safety setting. This excludes:
+* Handguns without a safety (I.E. Glocks, TT-33, etc)
+* Semi Auto Shotguns (full auto with those is handelled differently currently unknown to us, might be with slam fire)
 
 #### `Cursed.RemoveAttachmentChecks` -- removes checks related to attachments
 
@@ -50,7 +52,7 @@ This change makes any magazine usable on any gun. Why not?
 
 #### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
 
-Carrots in an SMG? Oh my!
+Potatoes in an SMG? Oh my! (Note Stripper Clips and SpeedLoaders are currently broken.)
 
 #### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
@@ -62,7 +64,7 @@ You can edit the amount by which time is slowed down with a single click by edit
 
 #### `Cursed.UnlockAll` -- unlocks all item spawners, rewards and whatnot
 
-Should be rather explanatory, have fun.
+Should be rather explanatory, have fun. Found under Misc>Backpacks
 
 ## Credits
 
