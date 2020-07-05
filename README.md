@@ -11,14 +11,14 @@ The main benefits of this collection are
 
 ## Installation
 
+This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- 
+a Unity plugin framework that comes prepackaged with necessary tools for modding.
+
 ### For the impatient:
 
 ![Installation guide as GIF](install.gif)
 
 ### Full guide:
-
-This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- 
-a Unity plugin framework that comes prepackaged with necessary tools for modding.
 
 To install, do the following:
 
