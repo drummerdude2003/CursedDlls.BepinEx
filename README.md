@@ -26,7 +26,8 @@ To install, do the following:
          Enabled = true
          ```
 3. Download latest set of Cursed.dll plugins from [releases](https://github.com/drummerdude2003/CursedDlls.BepinEx/releases)
-4. Open the downloaded zip. Pick the plugins you want (**check the descriptions below**) and put them into `<H3VR folder>/BepInEx/plugins` folder.
+4. Open the downloaded zip. Extract the downloaded zip into your **H3VR** folder. If you did it correctly, you should now have `CursedDlls` folder in `BepInEx/plugins` folder.
+5. *Optional* Select plugins you want. Go to `BepInEx/plugins/CursedDlls` and remove plugins you don't want. **Reference the list below for explanation of each plugin**
 5. Run the game and enjoy the madness
 
 
@@ -57,8 +58,7 @@ Allows to slow down time using the snapturning buttons. When time is slowed down
 sounds are pitched down as well.
 
 You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
-`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg`.
-
+`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg` (you need to run the game at least once for it to be generated).
 
 #### `Cursed.UnlockAll` -- unlocks all item spawners, rewards and whatnot
 
