@@ -68,5 +68,12 @@ namespace Cursed.RemoveAttachmentChecks
                 .SetAndAdvance(OpCodes.Nop, null)
                 .InstructionEnumeration();
         }
+
+        [HarmonyPatch(typeof(FVRFireArmAttachment), nameof(FVRFireArmAttachment.AttachToMount))]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> RemoveAttachmentCollision(IEnumerable<CodeInstruction> instrs)
+        {
+            return instrs.Manipulator(i => i.Is(OpCodes.Ldstr, "Default"), i => i.operand = "NoCol");
+        }
     }
 }
