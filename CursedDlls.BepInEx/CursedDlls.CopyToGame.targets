@@ -1,0 +1,20 @@
+<!--
+	CursedDlls.CopyToGame.targets: 
+		Targets to automatically copy the output target file to game directory.
+
+	(AKA: Welcome to MSBuild internals. Hope you enjoy your stay!)
+  (Written by modeco80)
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!-- Nested target that actually calls the batch file -->
+	<Target Name="CopyToGame">
+		<Exec Command="call $(SolutionDir)CopyToGame.bat $(TargetPath) plugins\CursedDll\" />
+	</Target>
+	
+	<!-- Common post-build event -->
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<CallTarget Targets="CopyToGame"/>
+	</Target>
+
+</Project>
