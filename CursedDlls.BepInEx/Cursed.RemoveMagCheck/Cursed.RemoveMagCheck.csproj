@@ -6,6 +6,11 @@
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
+  <!-- output release binaries in a single directory -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <OutputPath>../../bin/BepInEx/plugins/CursedDlls</OutputPath>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(SolutionDir)..\lib\0Harmony.dll</HintPath>
