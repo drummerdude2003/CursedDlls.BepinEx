@@ -1,18 +1,63 @@
 <!--
 	CursedDlls.CopyToGame.targets: 
-		Targets to automatically copy the output target file to game directory.
+		A set of MSBuild targets to automatically copy the output target file to the game directory.
 
 	(AKA: Welcome to MSBuild internals. Hope you enjoy your stay!)
-  (Written by modeco80)
+	(Written by modeco80)
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<!-- Nested target that actually calls the batch file -->
-	<Target Name="CopyToGame">
-		<Exec Command="call $(SolutionDir)CopyToGame.bat $(TargetPath) plugins\CursedDll\" />
+	<PropertyGroup>
+		
+		<!-- 
+			The BepInEx target path.
+			
+			The provided default value is a sane default for people who have H3VR in the default Steam library directory.
+		-->
+    <BepInExTargetPath>C:\Program Files (x86)\Steam\steamapps\common\H3VR\BepInEx\</BepInExTargetPath>
+
+  </PropertyGroup>
+	
+	<Choose>
+		<When Condition="'$(BepInExOutputPath)' == ''">
+			<PropertyGroup>
+				<!-- 
+					The output path inside of the BepInEx target path.
+					
+					This default should **not** be changed for most things except for MonoMod assemblies and other things which should .
+				-->
+				<BepInExOutputPath>plugins\CursedDll</BepInExOutputPath>
+			</PropertyGroup>
+		</When>
+	</Choose>
+	
+	<!--
+		Target that runs only if the target path doesn't exist.
+		
+		If this target runs, an error detailing that the target path doesn't exist will stop the build.
+		Note that the DLLs will have been placed in their final output path, just never copied to the game directory.
+	-->
+	<Target Name="CheckTargetPathExists" Condition="!Exists($(BepInExTargetPath))">
+		<Error Text="CopyToGame: Target path $(BepInExTargetPath) doesn't exist." />
 	</Target>
 	
-	<!-- Common post-build event -->
+	<!-- 
+		Nested target that copies the DLL to the game output path.
+    
+    Can be disabled by adding '/p:DisableCopyToGame=true' in your MSBuild command line.
+	-->
+	<Target Name="CopyToGame" Condition="'$(DisableCopyToGame)'==''">
+        <!-- Attempt to check if the target path exists. -->
+				<CallTarget Targets="CheckTargetPathExists" />
+				<Exec Command="if not exist &quot;$(BepInExTargetPath)$(BepInExOutputPath)&quot; mkdir &quot;$(BepInExTargetPath)$(BepInExOutputPath)&quot;" />
+				<Exec Command="copy /y &quot;$(TargetPath)&quot; &quot;$(BepInExTargetPath)$(BepInExOutputPath)\&quot;" />
+	</Target>
+	
+	<!-- 
+		Common post-build event, defined to automatically call CopyToGame.
+		
+		Feel free to comment out if you need a custom pro/epilogue.
+	-->
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<CallTarget Targets="CopyToGame"/>
 	</Target>

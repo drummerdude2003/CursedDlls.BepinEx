@@ -15,6 +15,9 @@
     <Reference Include="0Harmony">
       <HintPath>$(SolutionDir)..\lib\0Harmony.dll</HintPath>
     </Reference>
+    <Reference Include="ES2">
+      <HintPath>$(SolutionDir)..\lib\ES2.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(SolutionDir)..\lib\Assembly-CSharp.dll</HintPath>
     </Reference>
