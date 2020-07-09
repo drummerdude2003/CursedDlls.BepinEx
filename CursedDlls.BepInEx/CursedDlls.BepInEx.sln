@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursed.RemoveMagCheck", "Cu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cursed.TimeScale", "Cursed.TimeScale\Cursed.TimeScale.csproj", "{D29A2C12-9FAE-4F37-96A7-A6D28DC777AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cursed.SuppressAssemblyLoadErrors", "Cursed.SuppressAssemblyLoadErrors\Cursed.SuppressAssemblyLoadErrors.csproj", "{85D8B101-C591-4E1E-A5C9-BCFC8D628FB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D29A2C12-9FAE-4F37-96A7-A6D28DC777AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D29A2C12-9FAE-4F37-96A7-A6D28DC777AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D29A2C12-9FAE-4F37-96A7-A6D28DC777AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85D8B101-C591-4E1E-A5C9-BCFC8D628FB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85D8B101-C591-4E1E-A5C9-BCFC8D628FB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85D8B101-C591-4E1E-A5C9-BCFC8D628FB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85D8B101-C591-4E1E-A5C9-BCFC8D628FB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
