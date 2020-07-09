@@ -60,6 +60,10 @@ This change makes any magazine usable on any gun. Why not?
 
 Potatos in an SMG? Oh my! (Note Stripper Clips and SpeedLoaders are currently broken. Yes the 6Twelve is broken to *all* hell with this)
 
+#### `Cursed.SuppressAssemblyLoadErrors` -- fix errors when loading certain plugins
+
+Enables proper support for tools like [ConfigManager](https://github.com/BepInEx/BepInEx.ConfigurationManager) and [RuntimeUnityEditor](https://github.com/ManlyMarco/RuntimeUnityEditor).
+
 #### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
 Allows to slow down time using the snapturning buttons. When time is slowed down, 
