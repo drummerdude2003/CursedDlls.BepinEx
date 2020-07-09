@@ -2,30 +2,37 @@
 
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
-	  <!-- ignore .NET sdk generating one for us... -->
-	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- ignore .NET sdk generating one for us... -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <!-- output release binaries in a single directory -->
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <OutputPath>../../bin/BepInEx/plugins/CursedDlls</OutputPath>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(SolutionDir)..\lib\0Harmony.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(SolutionDir)..\lib\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>$(SolutionDir)..\lib\BepInEx.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(SolutionDir)..\lib\UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(SolutionDir)..\lib\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
