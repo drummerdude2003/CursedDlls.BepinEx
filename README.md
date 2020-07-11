@@ -19,7 +19,7 @@ Requirements are:
 
 ### For the impatient:
 
-[View installation guide video (check the full guide below too!)](guide.webm)
+![Installation guide as GIF](install.gif)
 
 ### Full guide:
 
