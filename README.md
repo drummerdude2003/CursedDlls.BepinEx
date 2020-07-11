@@ -11,12 +11,15 @@ The main benefits of this collection are
 
 ## Installation
 
-This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- a Unity plugin framework that comes prepackaged with necessary tools for modding.
-[BepInEx.MonoMod.Loader](https://github.com/BepInEx/BepInEx.MonoMod.Loader) and [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager) are also necessary for the collection to function correctly.
+Requirements are:
+
+* [BepInEx 5.2 or newer](https://github.com/BepInEx/BepInEx/releases)
+* [BepInEx.MonoMod.Loader](https://github.com/BepInEx/BepInEx.MonoMod.Loader/releases)
+* [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases)
 
 ### For the impatient:
 
-![Installation guide as GIF](install.gif)
+[View installation guide video (check the full guide below too!)](guide.webm)
 
 ### Full guide:
 
