@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using BepInEx;
 using FistVR;
 using HarmonyLib;
+using RUST.Steamworks;
+using Steamworks;
 
+[assembly: AssemblyVersion("1.1")]
 namespace Cursed.FullAuto
 {
-    [BepInPlugin("dll.cursed.fullauto", "Full Auto", "1.0")]
+    [BepInPlugin("dll.cursed.fullauto", "CursedDlls - Full Auto", "1.1")]
     public class FullAutoPlugin : BaseUnityPlugin
     {
         private static readonly FastInvokeHandler UpdateSafetyPos =
@@ -109,6 +114,17 @@ namespace Cursed.FullAuto
             }
 
             __result = false;
+            return false;
+        }
+
+        /*
+		 * Skiddie prevention
+		 */
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
+        [HarmonyPrefix]
+        public static bool HSM_UpdateScore()
+        {
             return false;
         }
     }

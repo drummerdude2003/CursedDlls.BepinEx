@@ -1,56 +1,95 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
 using FistVR;
 using HarmonyLib;
+using RUST.Steamworks;
+using Steamworks;
+using UnityEngine;
 
-// TODO: Simplify patches, since right now they preserve the branches
-
+[assembly: AssemblyVersion("1.1")]
 namespace RemoveMagCheck
 {
-    [BepInPlugin("dll.cursed.removemagcheck", "Remove magazine check", "1.0")]
+    [BepInPlugin("dll.cursed.removemagcheck", "CursedDlls - Remove Magazine (and clip) Checks", "1.1")]
     public class RemoveMagCheckPlugin : BaseUnityPlugin
     {
+        public static ManualLogSource Logger { get; set; }
+
+        private static ConfigEntry<bool> _typeChecksDisabled;
+
         private void Awake()
         {
-            Harmony.CreateAndPatchAll(typeof(RemoveMagCheckPlugin));
+            _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
+                "Disables type checking on magazines and clips. This lets you insert any mag or clip of any type into any gun.");
+
+            Logger = base.Logger;
+
+            if (File.Exists($@"{Paths.BepInExRootPath}\monomod\CursedDlls\Assembly-CSharp.Cursed.RemoveRoundTypeCheck.mm.dll"))
+                Harmony.CreateAndPatchAll(typeof(RemoveMagCheckPlugin));
+            else
+                Logger.LogError(@"This plugin requires the Assembly-CSharp.Cursed.RemoveRoundType.mm.dll MonoMod patch to function properly! Download and install it from https://github.com/drummerdude2003/CursedDlls.BepinEx/.");
         }
 
+        public static bool TypeCheck(bool condition)
+        {
+            return condition || _typeChecksDisabled.Value;
+        }
+
+        /*
+		 * Type patches
+		 * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
+		 */
         [HarmonyPatch(typeof(FVRFireArmMagazine), "FVRFixedUpdate")]
-        [HarmonyTranspiler]
-        private static IEnumerable<CodeInstruction> FVRFixedUpdateTranspiler(IEnumerable<CodeInstruction> instrs)
-        {
-            return new CodeMatcher(instrs)
-                .MatchForward(false,
-                    new CodeMatch(OpCodes.Ldloc_0),
-                    new CodeMatch(OpCodes.Ldfld,
-                        AccessTools.Field(typeof(FVRFireArm), nameof(FVRFireArm.MagazineType))),
-                    new CodeMatch(OpCodes.Ldarg_0),
-                    new CodeMatch(OpCodes.Ldfld,
-                        AccessTools.Field(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.MagazineType))))
-                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
-                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
-                .SetAndAdvance(OpCodes.Nop, null)
-                .SetAndAdvance(OpCodes.Nop, null).InstructionEnumeration();
-        }
+		[HarmonyPatch(typeof(FVRFireArmReloadTriggerMag), "OnTriggerEnter")]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> PatchMagazineTypeChecksTranspiler(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "MagazineType"),
+				new CodeMatch(i => i.opcode == OpCodes.Bne_Un || i.opcode == OpCodes.Bne_Un_S))
+			.Repeat(m =>
+			{
+				m.Advance(1)
+				.SetOpcodeAndAdvance(OpCodes.Brfalse)
+				.Advance(-1)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Ceq, null))
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveMagCheckPlugin), "TypeCheck")));
+			})
+			.InstructionEnumeration();
+		}
 
-        [HarmonyPatch(typeof(FVRFireArmReloadTriggerMag), "OnTriggerEnter")]
-        [HarmonyTranspiler]
-        private static IEnumerable<CodeInstruction> OnTriggerEnterTranspiler(IEnumerable<CodeInstruction> instrs)
-        {
-            return new CodeMatcher(instrs)
-                .MatchForward(false,
-                    new CodeMatch(OpCodes.Ldloc_2),
-                    new CodeMatch(OpCodes.Ldarg_0),
-                    new CodeMatch(OpCodes.Ldfld,
-                        AccessTools.Field(typeof(FVRFireArmReloadTriggerMag),
-                            nameof(FVRFireArmReloadTriggerMag.Magazine))),
-                    new CodeMatch(OpCodes.Ldfld,
-                        AccessTools.Field(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.MagazineType))))
-                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
-                .SetAndAdvance(OpCodes.Ldc_I4_0, null)
-                .SetAndAdvance(OpCodes.Nop, null)
-                .SetAndAdvance(OpCodes.Nop, null).InstructionEnumeration();
-        }
-    }
+		[HarmonyPatch(typeof(FVRFireArmClipTriggerClip), "OnTriggerEnter")]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> PatchClipTypeCheckTranspiler(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "ClipType"),
+				new CodeMatch(i => i.opcode == OpCodes.Bne_Un || i.opcode == OpCodes.Bne_Un_S))
+			.Repeat(m =>
+			{
+				m.Advance(1)
+				.SetOpcodeAndAdvance(OpCodes.Brfalse)
+				.Advance(-1)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Ceq, null))
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveMagCheckPlugin), "TypeCheck")));
+			})
+			.InstructionEnumeration();
+		}
+
+		/*
+		 * Skiddie prevention
+		 */
+		[HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
+		[HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
+		[HarmonyPrefix]
+		public static bool HSM_UpdateScore()
+		{
+			return false;
+		}
+	}
 }

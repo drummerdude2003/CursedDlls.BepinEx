@@ -1,14 +1,19 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
+using RUST.Steamworks;
+using Steamworks;
 using UnityEngine;
 using Valve.VR;
 
+[assembly: AssemblyVersion("1.1")]
 namespace Cursed.TimeScale
 {
-    [BepInPlugin("dll.cursed.timescale", "Time scaler", "1.0")]
+    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.1")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;
@@ -17,6 +22,7 @@ namespace Cursed.TimeScale
         {
             _timeScaleIncrement = Config.Bind("General", "TimeScaleIncrement", 0.125f,
                 "How much time scale is increased/decreased at a time");
+
             Harmony.CreateAndPatchAll(typeof(TimeScaleFixPlugin));
         }
 
@@ -43,11 +49,19 @@ namespace Cursed.TimeScale
             return false;
         }
 
+        [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Awake))]
+        [HarmonyPostfix]
+        public static void OverflowClockText(FVRWristMenu __instance)
+        {
+            __instance.Clock.verticalOverflow = VerticalWrapMode.Overflow;
+            __instance.Clock.horizontalOverflow = HorizontalWrapMode.Overflow;
+        }
+
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Update))]
         [HarmonyPostfix]
         public static void UpdateTimeScaleText(FVRWristMenu __instance, bool ___m_isActive)
         {
-            if (___m_isActive) __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
+            if (___m_isActive) __instance.Clock.text = $"{Time.timeScale.ToString(CultureInfo.InvariantCulture)}\n{DateTime.Now.ToString("H:mm:ss")}";
         }
 
         private static void DiffTimeScale(FVRWristMenu self, int dir)
@@ -57,6 +71,17 @@ namespace Cursed.TimeScale
             Time.timeScale += _timeScaleIncrement.Value * dir;
             Time.fixedDeltaTime = Time.timeScale / SteamVR.instance.hmd_DisplayFrequency;
             Time.timeScale = Mathf.Clamp(Time.timeScale, 0f, 1f);
+        }
+
+        /*
+		 * Skiddie prevention
+		 */
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
+        [HarmonyPrefix]
+        public static bool HSM_UpdateScore()
+        {
+            return false;
         }
     }
 }

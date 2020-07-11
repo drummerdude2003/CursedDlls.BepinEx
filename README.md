@@ -7,12 +7,12 @@ The main benefits of this collection are
 
 * All patches are applied at runtime without permanently modifying the original game assemblies
     * That means the patches survive game updates much better
-* All patches are separated into plugins, so it's possible to choose the only features that you want
+* All patches are separated into plugins, so it's possible to only choose the features that you want
 
 ## Installation
 
-This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- 
-a Unity plugin framework that comes prepackaged with necessary tools for modding.
+This plugin collection relies on [BepInEx](https://github.com/BepInEx/BepInEx) -- a Unity plugin framework that comes prepackaged with necessary tools for modding.
+[BepInEx.MonoMod.Loader](https://github.com/BepInEx/BepInEx.MonoMod.Loader) and [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager) are also necessary for the collection to function correctly.
 
 ### For the impatient:
 
@@ -32,12 +32,18 @@ To install, do the following:
          Enabled = true
          ```
 3. Download latest set of Cursed.dll plugins from [releases](https://github.com/drummerdude2003/CursedDlls.BepinEx/releases)
-4. Open the downloaded zip. Extract the downloaded zip into your **H3VR** folder. If you did it correctly, you should now have `CursedDlls` folder in `BepInEx/plugins` folder.
-5. *Optional* Select plugins you want. Go to `BepInEx/plugins/CursedDlls` and remove plugins you don't want. **Reference the list below for explanation of each plugin**
-5. Run the game and enjoy the madness
+4. Open the downloaded zip. Extract the downloaded zip into your **H3VR** folder. If you did it correctly, you should now have `CursedDlls` folder in the `BepInEx/plugins` folder.
+5. Download BepInEx.MonoMod.Loader from its [releases](https://github.com/BepInEx/BepInEx.MonoMod.Loader/releases) and extract the zip into your **H3VR** folder. If you did it correctly, you should now have a `monomod` folder in `BepInEx`.
+6. Download BepInEx.ConfigurationManager from its [releases](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) and extract the zip into your **H3VR** folder. If you did it correctly, you should now have a `ConfigurationManager.dll` file in `BepInEx/plugins`.
+7. *Optional* Select plugins you want. Go to `BepInEx/plugins/CursedDlls` and remove plugins you don't want. **Reference the list below for explanation of each plugin**
+8. Run the game and enjoy the madness
 
 
 ## Plugin descriptions
+
+#### `Assembly-CSharp.Cursed.RemoveRoundTypeCheck.mm` -- adds a type field to all rounds
+
+Doesn't add any features by itself, but is required for some plugins to work
 
 #### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
 
@@ -45,20 +51,30 @@ Makes all closed bolt rifles and handguns have a full auto safety setting. This 
 * Handguns without a safety (I.E. Glocks, TT-33, etc)
 * Semi Auto Shotguns (full auto with those is handelled differently currently unknown to us, might be with slam fire)
 
+#### `Cursed.BetterBipods` -- improves bipod recoil
+
+Bipods now have balanced recoil, more rearward than upward
+
 #### `Cursed.RemoveAttachmentChecks` -- removes checks related to attachments
 
 * All attachments are bi-directional
-* Bipods have balanced recoil, more rearward than upward
-* You can apply any attachment on any weapon
+* You can apply any attachment on any weapon in any attachment point
 * There is no upper bound on the number of attachments per weapon
+* If easy mag reloading is enabled, attachments will phase through objects to create yet more cursed guns
 
-#### `Cursed.RemoveMagCheck` -- allows any magazine to be used on any gun
+#### `Cursed.RemoveMagCheck` -- allows any magazine or clip to be used on any gun
 
-This change makes any magazine usable on any gun. Why not?
+This change makes any magazine or clip usable on any gun. Why not?
 
-#### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun
+#### `Cursed.RemoveRoundTypeCheck` -- allows any round to be used in any gun or any magazine/clip
 
-Potatos in an SMG? Oh my! (Note Stripper Clips and SpeedLoaders are currently broken. Yes the 6Twelve is broken to *all* hell with this)
+Potatos in an SMG? Oh my! This also adds some extra features to several other things.
+
+* Load any round into any speedloader
+* Load any round into the 6Twelve
+* Load any round into belt feds
+* The ammo spawner can now fill any gun in the game with any ammo
+* If an invalid round is created (ie a JHP shotgun shell) it is replaced with a FMJ .45ACP
 
 #### `Cursed.SuppressAssemblyLoadErrors` -- fix errors when loading certain plugins
 
@@ -66,17 +82,21 @@ Enables proper support for tools like [ConfigManager](https://github.com/BepInEx
 
 #### `Cursed.TimeScale` -- allows to speed up or slow down the game
 
-Allows to slow down time using the snapturning buttons. When time is slowed down, 
-sounds are pitched down as well.
+Allows to slow down time using the snapturning buttons in the wrist menu. When time is slowed down, sounds are pitched down as well.
 
 You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
-`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg` (you need to run the game at least once for it to be generated).
+`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg` (you need to run the game at least once for it to be generated.)
 
 #### `Cursed.UnlockAll` -- unlocks all Rewards, puts non-item spawner items into the item spawner
 
-Should be rather explanatory, have fun. Found under Misc>Backpacks
+Should be rather explanatory, have fun. All objects are found under Misc->Backpacks.
+
+You can choose to overwrite your Rewards.txt contents by editing the configuration file at 
+`<H3VR folder>/BepInEx/config/dll.cursed.unlockall.cfg` (again, you need to run the game at least once for it to be generated.)
 
 ## Credits
 
 * [drummerdude2003](https://github.com/drummerdude2003) -- original work
 * [denikson](https://github.com/denikson) -- help with porting patches over to Harmony
+* [BlockBuilder57](https://github.com/BlockBuilder57) -- improvements to existing patches and some new type checking patches
+* [modeco80](https://github.com/modeco80) -- developed MSBuild targets to automatically copy the plugins to the proper directories

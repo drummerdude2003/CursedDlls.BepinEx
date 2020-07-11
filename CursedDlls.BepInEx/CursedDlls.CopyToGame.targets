@@ -24,7 +24,7 @@
 					
 					This default should **not** be changed for most things except for MonoMod assemblies and other things which should .
 				-->
-				<BepInExOutputPath>plugins\CursedDll</BepInExOutputPath>
+				<BepInExOutputPath>plugins\CursedDlls</BepInExOutputPath>
 			</PropertyGroup>
 		</When>
 	</Choose>

@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx;
+using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
+using RUST.Steamworks;
+using Steamworks;
 using UnityEngine;
 
+[assembly: AssemblyVersion("1.1")]
 namespace Cursed.UnlockAll
 {
-    [BepInPlugin("dll.cursed.unlockall", "Unlock all items", "1.0")]
+    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.1")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _overwriteRewardsTxt;
+
         private void Awake()
         {
+            _overwriteRewardsTxt = Config.Bind("General", "OverwriteRewardsTxt", false,
+                "Overwrites the contents of Rewards.txt with every unlocked object. Even if this is false, however, all reward items will show in the Item Spawner.");
+
             Harmony.CreateAndPatchAll(typeof(UnlockAllPlugin));
         }
 
@@ -64,7 +74,7 @@ namespace Cursed.UnlockAll
         [HarmonyPrefix]
         public static bool IsRewardUnlockedPrefix(RewardUnlocks __instance, ref bool __result, string ID)
         {
-            if (__instance.Rewards.Contains(ID))
+            if (__instance.Rewards.Contains(ID) && _overwriteRewardsTxt.Value)
             {
                 __instance.Rewards.Add(ID);
                 using (var writer = ES2Writer.Create("Rewards.txt"))
@@ -82,6 +92,17 @@ namespace Cursed.UnlockAll
         public static bool IsRewardUnlockedPrefix(RewardUnlocks __instance, ref bool __result, ItemSpawnerID ID)
         {
             __result = __instance.IsRewardUnlocked(ID.ItemID);
+            return false;
+        }
+
+        /*
+		 * Skiddie prevention
+		 */
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
+        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
+        [HarmonyPrefix]
+        public static bool HSM_UpdateScore()
+        {
             return false;
         }
     }

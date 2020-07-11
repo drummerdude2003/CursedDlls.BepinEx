@@ -22,6 +22,10 @@
       <HintPath>$(SolutionDir)..\lib\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
+		<Reference Include="Assembly-CSharp-firstpass">
+			<HintPath>$(SolutionDir)..\lib\Assembly-CSharp-firstpass.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
     <Reference Include="BepInEx">
       <HintPath>$(SolutionDir)..\lib\BepInEx.dll</HintPath>
       <Private>false</Private>
