@@ -65,9 +65,12 @@ namespace Cursed.TimeScale
         [HarmonyPostfix]
         public static void UpdateTimeScaleText(FVRWristMenu __instance, bool ___m_isActive)
         {
-            if (___m_isActive) __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
-            try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
-            catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
+            if (___m_isActive)
+            {
+                __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
+                try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
+                catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
+            }
         }
 
         private static void DiffTimeScale(FVRWristMenu self, int dir)
