@@ -17,11 +17,14 @@ namespace Cursed.TimeScale
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;
+        private static ConfigEntry<string>  _wristMenuDateTimeFormat;
 
         private void Awake()
         {
             _timeScaleIncrement = Config.Bind("General", "TimeScaleIncrement", 0.125f,
                 "How much time scale is increased/decreased at a time");
+            _wristMenuDateTimeFormat = Config.Bind("General", "WristMenuDateTimeFormat", "hh:mm:ss tt",
+                "What the format of the wrist menu's clock is. Search for \"Custom date and time format strings\" to see the elligible characters you can use.");
 
             Harmony.CreateAndPatchAll(typeof(TimeScaleFixPlugin));
         }
@@ -50,18 +53,21 @@ namespace Cursed.TimeScale
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Awake))]
-        [HarmonyPostfix]
-        public static void OverflowClockText(FVRWristMenu __instance)
+        [HarmonyPrefix]
+        public static bool OverflowClockText(FVRWristMenu __instance)
         {
             __instance.Clock.verticalOverflow = VerticalWrapMode.Overflow;
             __instance.Clock.horizontalOverflow = HorizontalWrapMode.Overflow;
+            return false;
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Update))]
         [HarmonyPostfix]
         public static void UpdateTimeScaleText(FVRWristMenu __instance, bool ___m_isActive)
         {
-            if (___m_isActive) __instance.Clock.text = $"{Time.timeScale.ToString(CultureInfo.InvariantCulture)}\n{DateTime.Now.ToString("H:mm:ss")}";
+            if (___m_isActive) __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
+            try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
+            catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
         }
 
         private static void DiffTimeScale(FVRWristMenu self, int dir)

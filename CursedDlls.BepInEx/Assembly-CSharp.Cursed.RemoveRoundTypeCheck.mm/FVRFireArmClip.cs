@@ -19,7 +19,7 @@ namespace FistVR
 
 		public FVRLoadedRound[] LoadedRounds;
 
-		public override GameObject DuplicateFromSpawnLock(FVRViveHand hand)
+		public new GameObject DuplicateFromSpawnLock(FVRViveHand hand)
 		{
 			GameObject gameObject = base.DuplicateFromSpawnLock(hand);
 			patch_FVRFireArmClip component = gameObject.GetComponent<patch_FVRFireArmClip>();

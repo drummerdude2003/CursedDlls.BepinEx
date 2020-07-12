@@ -68,7 +68,7 @@ namespace Cursed.RemoveAttachmentChecks
             if (GM.Options.ControlOptions.UseEasyMagLoading && __instance.m_hand.OtherHand.CurrentInteractable != null && __instance.m_hand.OtherHand.CurrentInteractable is FVRFireArm)
             {
                 FVRFireArm fvrfireArm = __instance.m_hand.OtherHand.CurrentInteractable as FVRFireArm;
-                float handToMuzzle = Vector3.Distance(__instance.m_hand.OtherHand.transform.position, fvrfireArm.CurrentMuzzle.position) + 0.15f;
+                float handToMuzzle = Vector3.Distance(__instance.m_hand.OtherHand.transform.position, fvrfireArm.CurrentMuzzle.position) + 0.25f;
                 float distance = Vector3.Distance(__instance.transform.position, fvrfireArm.transform.position);
                 __instance.SetAllCollidersToLayer(false, distance <= handToMuzzle ? "NoCol" : "Default");
             }
