@@ -10,10 +10,10 @@ using Steamworks;
 using UnityEngine;
 using Valve.VR;
 
-[assembly: AssemblyVersion("1.1")]
+[assembly: AssemblyVersion("1.2")]
 namespace Cursed.TimeScale
 {
-    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.1")]
+    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.2")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;
@@ -53,12 +53,12 @@ namespace Cursed.TimeScale
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Awake))]
-        [HarmonyPrefix]
-        public static bool OverflowClockText(FVRWristMenu __instance)
+        [HarmonyPostfix]
+        public static void OverflowClockText(FVRWristMenu __instance)
         {
+            __instance.SetSelectedButton(0);
             __instance.Clock.verticalOverflow = VerticalWrapMode.Overflow;
             __instance.Clock.horizontalOverflow = HorizontalWrapMode.Overflow;
-            return false;
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.Update))]
@@ -67,19 +67,19 @@ namespace Cursed.TimeScale
         {
             if (___m_isActive)
             {
-                __instance.Clock.text = Time.timeScale.ToString(CultureInfo.InvariantCulture);
+                __instance.Clock.text = $"Time Scale: {Time.timeScale.ToString(CultureInfo.InvariantCulture)}";
                 try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
                 catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
             }
         }
 
-        private static void DiffTimeScale(FVRWristMenu self, int dir)
+        private static void DiffTimeScale(FVRWristMenu __instance, int dir)
         {
-            self.Aud.PlayOneShot(self.AudClip_Engage, 1f);
-            self.Aud.pitch = 1f;
             Time.timeScale += _timeScaleIncrement.Value * dir;
             Time.fixedDeltaTime = Time.timeScale / SteamVR.instance.hmd_DisplayFrequency;
             Time.timeScale = Mathf.Clamp(Time.timeScale, 0f, 1f);
+            __instance.Aud.pitch = 1f;
+            __instance.Aud.PlayOneShot(__instance.AudClip_Engage, 1f);
         }
 
         /*
