@@ -19,9 +19,19 @@ namespace FistVR
 
 		public FVRLoadedRound[] LoadedRounds;
 
-		public new GameObject DuplicateFromSpawnLock(FVRViveHand hand)
+		public GameObject DuplicateFromSpawnLock(FVRViveHand hand)
 		{
-			GameObject gameObject = base.DuplicateFromSpawnLock(hand);
+			//the base keyword does not work for some strange reason, so this is copied from FVRPhysicalObject.DuplicateFromSpawnLock
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.ObjectWrapper.GetGameObject(), this.Transform.position, this.Transform.rotation);
+			FVRPhysicalObject fvrObj = gameObject.GetComponent<FVRPhysicalObject>();
+			if (fvrObj is FVREntityProxy)
+			{
+				(fvrObj as FVREntityProxy).Data.PrimeDataLists((fvrObj as FVREntityProxy).Flags);
+			}
+			hand.ForceSetInteractable(fvrObj);
+			fvrObj.SetQuickBeltSlot(null);
+			fvrObj.BeginInteraction(hand);
+
 			patch_FVRFireArmClip component = gameObject.GetComponent<patch_FVRFireArmClip>();
 			for (int i = 0; i < Mathf.Min(this.LoadedRounds.Length, component.LoadedRounds.Length); i++)
 			{
