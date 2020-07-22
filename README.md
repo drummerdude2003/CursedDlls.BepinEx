@@ -48,15 +48,20 @@ To install, do the following:
 
 Doesn't add any features by itself, but is required for some plugins to work
 
+#### `Cursed.BetterBipods` -- improves bipod recoil
+
+Bipods now have balanced recoil, more rearward than upward
+
 #### `Cursed.FullAuto` -- make closed-bolt rifles and handguns be full-auto
 
 Makes all closed bolt rifles and handguns have a full auto safety setting. This excludes:
 * Handguns without a safety (I.E. Glocks, TT-33, etc)
 * Semi Auto Shotguns (full auto with those is handelled differently currently unknown to us, might be with slam fire)
 
-#### `Cursed.BetterBipods` -- improves bipod recoil
+#### `Cursed.LoadScene` -- load any scene with a button press
 
-Bipods now have balanced recoil, more rearward than upward
+You can edit which scene is loaded with CTRL+0-9 by editing the configuration file at 
+`<H3VR folder>/BepInEx/config/dll.cursed.loadscene.cfg` (you need to run the game at least once for it to be generated.)
 
 #### `Cursed.RemoveAttachmentChecks` -- removes checks related to attachments
 
