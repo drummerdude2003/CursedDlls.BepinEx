@@ -12,39 +12,47 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.1")]
+[assembly: AssemblyVersion("1.2")]
 namespace Cursed.RemoveRoundTypeCheck
 {
-    [BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.1")]
+    [BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.2")]
     public class RemoveRoundTypeCheckPlugin : BaseUnityPlugin
     {
         public static ManualLogSource Logger { get; set; }
 
         private static ConfigEntry<bool> _typeChecksDisabled;
+        private static ConfigEntry<bool> _unlimitedPalmAmount;
 
         private void Awake()
         {
             _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
                 "Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
+			_unlimitedPalmAmount = Config.Bind("General", "UnlimitedPalmAmount", true,
+				"Removes the limit on palm amounts. This lets you palm as many rounds as you want to.");
 
-            Logger = base.Logger;
+			Logger = base.Logger;
 
-            if (File.Exists($@"{Paths.BepInExRootPath}\monomod\CursedDlls\Assembly-CSharp.Cursed.RemoveRoundTypeCheck.mm.dll"))
+			if (File.Exists($@"{Paths.BepInExRootPath}\monomod\CursedDlls\Assembly-CSharp.Cursed.RemoveRoundTypeCheck.mm.dll"))
                 Harmony.CreateAndPatchAll(typeof(RemoveRoundTypeCheckPlugin));
             else
                 Logger.LogError(@"This plugin requires the Assembly-CSharp.Cursed.RemoveRoundType.mm.dll MonoMod patch to function properly! Download and install it from https://github.com/drummerdude2003/CursedDlls.BepinEx/.");
-        }
+		}
 
-        public static bool TypeCheck(bool condition)
+		public static bool TypeCheck(bool condition)
         {
             return condition || _typeChecksDisabled.Value;
         }
 
-        /*
+		public static bool PalmAmount(int proxies, int maxpalm)
+		{
+			return proxies < (_unlimitedPalmAmount.Value ? Int32.MaxValue : maxpalm);
+		}
+
+		/*
 		 * Type patches
 		 * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
 		 */
-        [HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
+		[HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
         [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
         [HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
         [HarmonyPatch(typeof(FVRFireArmRound), "FVRFixedUpdate")]
@@ -128,6 +136,43 @@ namespace Cursed.RemoveRoundTypeCheck
 				.InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(GameObject), nameof(GameObject.GetComponent), null, new Type[] { typeof(FVRFireArmRound) })))
 				.Advance(2)
 				.SetOperandAndAdvance(AccessTools.Method(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.AddRound), new Type[] { typeof(FVRFireArmRound), typeof(bool), typeof(bool) }));
+			})
+			.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
+		[HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
+		[HarmonyPatch(typeof(Speedloader), nameof(Speedloader.UpdateInteraction))]
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> MaxPalmedAmountOverride(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Castclass && ((Type)i.operand) == typeof(FVRFireArmRound)),
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "MaxPalmedAmount"),
+				new CodeMatch(i => i.opcode == OpCodes.Bge || i.opcode == OpCodes.Bge_S))
+			.Repeat(m =>
+			{
+				m.Advance(2)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "PalmAmount")))
+				.SetOpcodeAndAdvance(OpCodes.Brfalse);
+			})
+			.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerEnter))]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> MaxPalmedAmountOnRoundTouch(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Ldarg_0),
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "MaxPalmedAmount"),
+				new CodeMatch(i => i.opcode == OpCodes.Bge || i.opcode == OpCodes.Bge_S))
+			.Repeat(m =>
+			{
+				m.Advance(2)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "PalmAmount")))
+				.SetOpcodeAndAdvance(OpCodes.Brfalse);
 			})
 			.InstructionEnumeration();
 		}
@@ -346,6 +391,34 @@ namespace Cursed.RemoveRoundTypeCheck
 			FVRFireArmRound rnd = __instance.RemoveRound(false).GetComponent<FVRFireArmRound>();
 			SM.PlayGenericSound(__instance.LoadFromClipToMag, __instance.transform.position);
 			__instance.FireArm.Magazine.AddRound(rnd, false, true);
+			return false;
+		}
+
+		[HarmonyPatch(typeof(Speedloader), nameof(Speedloader.DuplicateFromSpawnLock))]
+		[HarmonyPrefix]
+		public static bool Speedloader_DuplicateFromSpawnLock(Speedloader __instance, ref GameObject __result, FVRViveHand hand)
+		{
+			//unlike MonoMod the base class can technically be retrived, but it's a PitA so again this is copied from FVRPhysicalObject.DuplicateFromSpawnLock
+			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.ObjectWrapper.GetGameObject(), __instance.Transform.position, __instance.Transform.rotation);
+			FVRPhysicalObject fvrObj = gameObject.GetComponent<FVRPhysicalObject>();
+			if (fvrObj is FVREntityProxy)
+				(fvrObj as FVREntityProxy).Data.PrimeDataLists((fvrObj as FVREntityProxy).Flags);
+
+			hand.ForceSetInteractable(fvrObj);
+			fvrObj.SetQuickBeltSlot(null);
+			fvrObj.BeginInteraction(hand);
+
+			Speedloader component = gameObject.GetComponent<Speedloader>();
+			for (int i = 0; i < __instance.Chambers.Count; i++)
+			{
+				component.Chambers[i].Type = __instance.Chambers[i].Type;
+
+				if (__instance.Chambers[i].IsLoaded)
+					component.Chambers[i].Load(__instance.Chambers[i].LoadedClass, false);
+				else
+					component.Chambers[i].Unload();
+			}
+			__result = gameObject;
 			return false;
 		}
 
