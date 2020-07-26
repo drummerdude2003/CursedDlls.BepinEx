@@ -15,33 +15,36 @@ using UnityEngine;
 [assembly: AssemblyVersion("1.2")]
 namespace Cursed.RemoveRoundTypeCheck
 {
-    [BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.2")]
-    public class RemoveRoundTypeCheckPlugin : BaseUnityPlugin
-    {
-        public static ManualLogSource Logger { get; set; }
+	[BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.2")]
+	public class RemoveRoundTypeCheckPlugin : BaseUnityPlugin
+	{
+		public static ManualLogSource Logger { get; set; }
 
-        private static ConfigEntry<bool> _typeChecksDisabled;
-        private static ConfigEntry<bool> _unlimitedPalmAmount;
+		private static ConfigEntry<bool> _typeChecksDisabled;
+		private static ConfigEntry<bool> _unlimitedPalmAmount;
+		private static ConfigEntry<float> _timeSinceRoundInsertedOverride;
 
-        private void Awake()
-        {
-            _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
-                "Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
+		private void Awake()
+		{
+			_typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
+				"Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
 			_unlimitedPalmAmount = Config.Bind("General", "UnlimitedPalmAmount", true,
 				"Removes the limit on palm amounts. This lets you palm as many rounds as you want to.");
+			_timeSinceRoundInsertedOverride = Config.Bind("General", "TimeSinceRoundInsertedOverride", 0.3f,
+				"Overrides how long it takes for a round to be inserted into a clip or magazine.");
 
 			Logger = base.Logger;
 
 			if (File.Exists($@"{Paths.BepInExRootPath}\monomod\CursedDlls\Assembly-CSharp.Cursed.RemoveRoundTypeCheck.mm.dll"))
-                Harmony.CreateAndPatchAll(typeof(RemoveRoundTypeCheckPlugin));
-            else
-                Logger.LogError(@"This plugin requires the Assembly-CSharp.Cursed.RemoveRoundType.mm.dll MonoMod patch to function properly! Download and install it from https://github.com/drummerdude2003/CursedDlls.BepinEx/.");
+				Harmony.CreateAndPatchAll(typeof(RemoveRoundTypeCheckPlugin));
+			else
+				Logger.LogError(@"This plugin requires the Assembly-CSharp.Cursed.RemoveRoundType.mm.dll MonoMod patch to function properly! Download and install it from https://github.com/drummerdude2003/CursedDlls.BepinEx/.");
 		}
 
 		public static bool TypeCheck(bool condition)
-        {
-            return condition || _typeChecksDisabled.Value;
-        }
+		{
+			return condition || _typeChecksDisabled.Value;
+		}
 
 		public static bool PalmAmount(int proxies, int maxpalm)
 		{
@@ -53,27 +56,27 @@ namespace Cursed.RemoveRoundTypeCheck
 		 * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
 		 */
 		[HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
-        [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
-        [HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
-        [HarmonyPatch(typeof(FVRFireArmRound), "FVRFixedUpdate")]
-        [HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerEnter))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> PatchRoundTypeChecksTranspiler(IEnumerable<CodeInstruction> instrs)
-        {
-            return new CodeMatcher(instrs).MatchForward(false,
-                new CodeMatch(i => i.IsLdloc() || i.IsLdarg()),
-                new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "RoundType"),
-                new CodeMatch(i => i.opcode == OpCodes.Bne_Un || i.opcode == OpCodes.Bne_Un_S))
-            .Repeat(m =>
-            {
-                m.Advance(2)
-                .SetOpcodeAndAdvance(OpCodes.Brfalse)
-                .Advance(-1)
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Ceq, null))
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "TypeCheck")));
-            })
-            .InstructionEnumeration();
-        }
+		[HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
+		[HarmonyPatch(typeof(FVRFireArmRound), "FVRFixedUpdate")]
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerEnter))]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> PatchRoundTypeChecksTranspiler(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.IsLdloc() || i.IsLdarg()),
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "RoundType"),
+				new CodeMatch(i => i.opcode == OpCodes.Bne_Un || i.opcode == OpCodes.Bne_Un_S))
+			.Repeat(m =>
+			{
+				m.Advance(2)
+				.SetOpcodeAndAdvance(OpCodes.Brfalse)
+				.Advance(-1)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Ceq, null))
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "TypeCheck")));
+			})
+			.InstructionEnumeration();
+		}
 
 		[HarmonyPatch(typeof(Speedloader), nameof(Speedloader.OnTriggerEnter))]
 		[HarmonyPatch(typeof(Speedloader), nameof(Speedloader.UpdateInteraction))]
@@ -173,6 +176,23 @@ namespace Cursed.RemoveRoundTypeCheck
 				m.Advance(2)
 				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "PalmAmount")))
 				.SetOpcodeAndAdvance(OpCodes.Brfalse);
+			})
+			.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(FVRFireArmRound), "FVRFixedUpdate")]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> TimeSinceRoundInsertedOverride(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name.Contains("TimeSinceRoundInserted")),
+				new CodeMatch(i => i.opcode == OpCodes.Ldc_R4),
+				new CodeMatch(i => i.opcode == OpCodes.Ble_Un || i.opcode == OpCodes.Ble_Un_S))
+			.Repeat(m =>
+			{
+				m.Advance(1)
+				.InsertAndAdvance(new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(RemoveRoundTypeCheckPlugin), "_timeSinceRoundInsertedOverride")))
+				.SetInstructionAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(ConfigEntry<float>), "Value")));
 			})
 			.InstructionEnumeration();
 		}
@@ -521,7 +541,7 @@ namespace Cursed.RemoveRoundTypeCheck
 			__instance.LoadedClass = rclass;
 
 			if (AM.GetRoundSelfPrefab(__instance.Type, __instance.LoadedClass).GetGameObject().GetComponent<FVRFireArmRound>().FiredRenderer != null)
-            {
+			{
 				__instance.Filter.mesh = AM.GetRoundSelfPrefab(__instance.Type, __instance.LoadedClass).GetGameObject().GetComponent<FVRFireArmRound>().FiredRenderer.gameObject.GetComponent<MeshFilter>().sharedMesh;
 				__instance.LoadedRenderer.material = AM.GetRoundMaterial(__instance.Type, __instance.LoadedClass);
 				__instance.LoadedRenderer.enabled = true;
@@ -531,7 +551,7 @@ namespace Cursed.RemoveRoundTypeCheck
 				}
 			}
 			else
-            {
+			{
 				__instance.IsLoaded = false;
 				__instance.LoadedRenderer.enabled = false;
 			}
@@ -545,28 +565,28 @@ namespace Cursed.RemoveRoundTypeCheck
 		 * If you stumble across a .45 ACP FMJ out of nowhere, this is why
 		 */
 		[HarmonyPatch(typeof(AM), nameof(AM.getRoundMaterial))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundMaterial(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Material __result)
-        {
-            try { __result = ___TypeDic[rType][rClass].Material; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Material; return false; }
-        }
+		[HarmonyPrefix]
+		public static bool AM_getRoundMaterial(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Material __result)
+		{
+			try { __result = ___TypeDic[rType][rClass].Material; return false; }
+			catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Material; return false; }
+		}
 
-        [HarmonyPatch(typeof(AM), nameof(AM.getRoundMesh))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundMesh(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Mesh __result)
-        {
-            try { __result = ___TypeDic[rType][rClass].Mesh; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Mesh; return false; }
-        }
+		[HarmonyPatch(typeof(AM), nameof(AM.getRoundMesh))]
+		[HarmonyPrefix]
+		public static bool AM_getRoundMesh(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Mesh __result)
+		{
+			try { __result = ___TypeDic[rType][rClass].Mesh; return false; }
+			catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Mesh; return false; }
+		}
 
-        [HarmonyPatch(typeof(AM), nameof(AM.getRoundSelfPrefab))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundSelfPrefab(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref FVRObject __result)
-        {
-            try { __result = ___TypeDic[rType][rClass].ObjectID; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].ObjectID; return false; }
-        }
+		[HarmonyPatch(typeof(AM), nameof(AM.getRoundSelfPrefab))]
+		[HarmonyPrefix]
+		public static bool AM_getRoundSelfPrefab(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref FVRObject __result)
+		{
+			try { __result = ___TypeDic[rType][rClass].ObjectID; return false; }
+			catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].ObjectID; return false; }
+		}
 
 		/*
 		 * Skiddie prevention
@@ -575,8 +595,8 @@ namespace Cursed.RemoveRoundTypeCheck
 		[HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
 		[HarmonyPrefix]
 		public static bool HSM_UpdateScore()
-        {
+		{
 			return false;
-        }
+		}
 	}
 }
