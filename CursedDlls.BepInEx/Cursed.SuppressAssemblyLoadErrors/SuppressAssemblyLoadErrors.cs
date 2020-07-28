@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Bootstrap;
@@ -7,7 +8,7 @@ using HarmonyLib;
 using RUST.Steamworks;
 using Steamworks;
 
-[assembly: AssemblyVersion("1.1")]
+[assembly: AssemblyVersion("1.2")]
 namespace Cursed.SuppressAssemblyLoadErrors
 {
     [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.1")]
@@ -30,7 +31,7 @@ namespace Cursed.SuppressAssemblyLoadErrors
             if (__exception is ReflectionTypeLoadException re)
             {
                 __exception = null;
-                __result = re.Types;
+                __result = re.Types.Where(t => t != null).ToArray();
                 logger.LogDebug($"Encountered ReflectionTypeLoadException which was suppressed. Full error: \n${TypeLoader.TypeLoadExceptionToString(re)}");
             }
         }
