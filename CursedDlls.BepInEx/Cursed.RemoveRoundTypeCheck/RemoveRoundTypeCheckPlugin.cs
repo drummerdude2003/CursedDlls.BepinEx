@@ -164,18 +164,39 @@ namespace Cursed.RemoveRoundTypeCheck
 		}
 
 		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerEnter))]
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerExit))]
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
 		[HarmonyTranspiler]
-		public static IEnumerable<CodeInstruction> MaxPalmedAmountOnRoundTouch(IEnumerable<CodeInstruction> instrs)
+		public static IEnumerable<CodeInstruction> IsPalmableNoOp(IEnumerable<CodeInstruction> instrs)
+		{
+			return new CodeMatcher(instrs).MatchForward(false,
+				new CodeMatch(i => i.opcode == OpCodes.Ldarg_0),
+				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "isPalmable"),
+				new CodeMatch(i => i.opcode == OpCodes.Brfalse || i.opcode == OpCodes.Brfalse_S))
+			.Repeat(m =>
+			{
+				m.SetOpcodeAndAdvance(OpCodes.Nop)
+				.SetOpcodeAndAdvance(OpCodes.Nop)
+				.SetOpcodeAndAdvance(OpCodes.Nop);
+			})
+			.InstructionEnumeration();
+		}
+
+		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
+		[HarmonyTranspiler]
+		public static IEnumerable<CodeInstruction> DisableIsPalmable(IEnumerable<CodeInstruction> instrs)
 		{
 			return new CodeMatcher(instrs).MatchForward(false,
 				new CodeMatch(i => i.opcode == OpCodes.Ldarg_0),
 				new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "MaxPalmedAmount"),
-				new CodeMatch(i => i.opcode == OpCodes.Bge || i.opcode == OpCodes.Bge_S))
+				new CodeMatch(i => i.opcode == OpCodes.Ldc_I4_1),
+				new CodeMatch(i => i.opcode == OpCodes.Ble || i.opcode == OpCodes.Ble_S))
 			.Repeat(m =>
 			{
-				m.Advance(2)
-				.InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "PalmAmount")))
-				.SetOpcodeAndAdvance(OpCodes.Brfalse);
+				m.SetOpcodeAndAdvance(OpCodes.Nop)
+				.SetOpcodeAndAdvance(OpCodes.Nop)
+				.SetOpcodeAndAdvance(OpCodes.Nop)
+				.SetOpcodeAndAdvance(OpCodes.Nop);
 			})
 			.InstructionEnumeration();
 		}

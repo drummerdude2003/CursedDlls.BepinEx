@@ -27,23 +27,29 @@ namespace Cursed.LoadScene
         private static ConfigEntry<string> _sceneLoad9;
         private static ConfigEntry<string> _sceneLoad0;
 
+        private static ConfigEntry<KeyboardShortcut> _sceneReload;
+        private static ConfigEntry<KeyboardShortcut> _sceneLoadModifier;
+
         public void Awake()
         {
-            _sceneLoad0 = Config.Bind("General", "SceneLoad0", "", "What scene will load when CTRL+0 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad1 = Config.Bind("General", "SceneLoad1", "", "What scene will load when CTRL+1 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad2 = Config.Bind("General", "SceneLoad2", "", "What scene will load when CTRL+2 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad3 = Config.Bind("General", "SceneLoad3", "", "What scene will load when CTRL+3 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad4 = Config.Bind("General", "SceneLoad4", "", "What scene will load when CTRL+4 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad5 = Config.Bind("General", "SceneLoad5", "", "What scene will load when CTRL+5 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad6 = Config.Bind("General", "SceneLoad6", "", "What scene will load when CTRL+6 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad7 = Config.Bind("General", "SceneLoad7", "", "What scene will load when CTRL+7 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad8 = Config.Bind("General", "SceneLoad8", "", "What scene will load when CTRL+8 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
-            _sceneLoad9 = Config.Bind("General", "SceneLoad9", "", "What scene will load when CTRL+9 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneReload = Config.Bind("General", "Reload", new KeyboardShortcut(KeyCode.Space), "Controls what key(s) you need to press to reload the current scene.");
+            _sceneLoadModifier = Config.Bind("General", "Modifier", new KeyboardShortcut(KeyCode.LeftControl), "Controls what key(s) you need to press to load scenes.");
+
+            _sceneLoad0 = Config.Bind("General", "SceneLoad0", "", "What scene will load when [Modifier]+0 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad1 = Config.Bind("General", "SceneLoad1", "", "What scene will load when [Modifier]+1 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad2 = Config.Bind("General", "SceneLoad2", "", "What scene will load when [Modifier]+2 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad3 = Config.Bind("General", "SceneLoad3", "", "What scene will load when [Modifier]+3 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad4 = Config.Bind("General", "SceneLoad4", "", "What scene will load when [Modifier]+4 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad5 = Config.Bind("General", "SceneLoad5", "", "What scene will load when [Modifier]+5 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad6 = Config.Bind("General", "SceneLoad6", "", "What scene will load when [Modifier]+6 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad7 = Config.Bind("General", "SceneLoad7", "", "What scene will load when [Modifier]+7 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad8 = Config.Bind("General", "SceneLoad8", "", "What scene will load when [Modifier]+8 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
+            _sceneLoad9 = Config.Bind("General", "SceneLoad9", "", "What scene will load when [Modifier]+9 is pressed. If you type a scene name wrong, you will be stuck in a loading purgatory!");
         }
 
         public void Update()
         {
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+            if (_sceneLoadModifier.Value.IsPressed())
             {
                 if (Input.GetKeyDown(KeyCode.Space))
                     SteamVR_LoadLevel.Begin(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
