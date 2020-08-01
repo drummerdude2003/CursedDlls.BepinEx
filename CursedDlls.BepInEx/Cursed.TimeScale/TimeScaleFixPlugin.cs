@@ -17,7 +17,7 @@ namespace Cursed.TimeScale
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;
-        private static ConfigEntry<string>  _wristMenuDateTimeFormat;
+        private static ConfigEntry<string> _wristMenuDateTimeFormat;
 
         private void Awake()
         {

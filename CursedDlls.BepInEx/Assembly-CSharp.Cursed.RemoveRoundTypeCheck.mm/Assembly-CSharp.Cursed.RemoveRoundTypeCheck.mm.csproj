@@ -9,7 +9,7 @@
 
 	<!-- output release binaries in a single directory -->
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<OutputPath>../../bin/BepInEx/monomod/CursedDlls</OutputPath>
+		<OutputPath>$(SolutionDir)..\bin\BepInEx\monomod\CursedDlls</OutputPath>
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 

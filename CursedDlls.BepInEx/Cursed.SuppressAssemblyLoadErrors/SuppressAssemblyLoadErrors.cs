@@ -11,7 +11,7 @@ using Steamworks;
 [assembly: AssemblyVersion("1.2")]
 namespace Cursed.SuppressAssemblyLoadErrors
 {
-    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.1")]
+    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.2")]
     public class SuppressAssemblyLoadErrors : BaseUnityPlugin
     {
         internal static ManualLogSource logger; 

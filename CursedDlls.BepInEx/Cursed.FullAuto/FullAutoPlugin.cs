@@ -8,10 +8,10 @@ using HarmonyLib;
 using RUST.Steamworks;
 using Steamworks;
 
-[assembly: AssemblyVersion("1.1")]
+[assembly: AssemblyVersion("1.2")]
 namespace Cursed.FullAuto
 {
-    [BepInPlugin("dll.cursed.fullauto", "CursedDlls - Full Auto", "1.1")]
+    [BepInPlugin("dll.cursed.fullauto", "CursedDlls - Full Auto", "1.2")]
     public class FullAutoPlugin : BaseUnityPlugin
     {
         private static readonly FastInvokeHandler UpdateSafetyPos =
