@@ -17,12 +17,15 @@ namespace Cursed.RemoveAttachmentChecks
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _removeAttachmentsAtAnyTime;
+        private static ConfigEntry<bool> _enableBiDirectionalAttachments;
         private static ConfigEntry<bool> _typeChecksDisabled;
 
         private void Awake()
         {
             _removeAttachmentsAtAnyTime = Config.Bind("General", "RemoveAttachmentsAtAnyTime", false,
                 "Allows the removal of attachments even when other attachments are on that attachment. Warning: becomes very janky when it comes to muzzle devices!");
+            _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", true,
+                "Enables attachments to be placed in any direction on rails. (For example, backwards muzzle devices)");
             _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
                 "Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
 
@@ -96,7 +99,8 @@ namespace Cursed.RemoveAttachmentChecks
         [HarmonyPrefix]
         public static void FVRFireArmAttachment_SetBiDirectional(ref bool ___IsBiDirectional)
         {
-            ___IsBiDirectional = true;
+            if (!___IsBiDirectional)
+                ___IsBiDirectional = _enableBiDirectionalAttachments.Value;
         }
 
         [HarmonyPatch(typeof(FVRFireArmAttachmentMount), "Awake")]
