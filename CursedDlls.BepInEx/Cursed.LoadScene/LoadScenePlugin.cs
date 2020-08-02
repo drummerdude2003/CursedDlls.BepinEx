@@ -49,9 +49,9 @@ namespace Cursed.LoadScene
 
         public void Update()
         {
-            if (_sceneLoadModifier.Value.IsPressed())
+            if (Input.GetKey(_sceneLoadModifier.Value.MainKey))
             {
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(_sceneReload.Value.MainKey))
                     SteamVR_LoadLevel.Begin(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
 
                 else if (!string.IsNullOrEmpty(_sceneLoad0.Value) && Input.GetKeyDown(KeyCode.Alpha0))
