@@ -291,7 +291,7 @@ namespace Cursed.RemoveRoundTypeCheck
 								for (int j = 0; j < baw.Barrels.Length; j++)
 									baw.Barrels[j].Chamber.SetRound(AM.GetRoundSelfPrefab(curAmmoType, curAmmoClass).GetGameObject().GetComponent<FVRFireArmRound>());
 						}
-						if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is Derringer)
+						else if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is Derringer)
 						{
 							Derringer derringer = GM.CurrentMovementManager.Hands[i].CurrentInteractable as Derringer;
 							if (TypeCheck(derringer.RoundType == curAmmoType))
@@ -305,13 +305,14 @@ namespace Cursed.RemoveRoundTypeCheck
 								for (int j = 0; j < saRevolver.Cylinder.Chambers.Length; j++)
 									saRevolver.Cylinder.Chambers[j].SetRound(AM.GetRoundSelfPrefab(curAmmoType, curAmmoClass).GetGameObject().GetComponent<FVRFireArmRound>());
 						}
+
 						if (GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chamber") != null) //handles most guns
 						{
 							FVRFireArmChamber Chamber = (FVRFireArmChamber)GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chamber").GetValue(GM.CurrentMovementManager.Hands[i].CurrentInteractable);
 							if (TypeCheck(fvrfireArm.RoundType == curAmmoType))
 								Chamber.SetRound(AM.GetRoundSelfPrefab(curAmmoType, curAmmoClass).GetGameObject().GetComponent<FVRFireArmRound>());
 						}
-						if (GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers") != null) //handles Revolver, LAPD2019, RevolvingShotgun
+						else if (GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers") != null) //handles Revolver, LAPD2019, RevolvingShotgun
 						{
 							FVRFireArmChamber[] Chambers = (FVRFireArmChamber[])GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers").GetValue(GM.CurrentMovementManager.Hands[i].CurrentInteractable);
 							if (TypeCheck(Chambers[0].RoundType == curAmmoType))
@@ -374,25 +375,26 @@ namespace Cursed.RemoveRoundTypeCheck
 								if (TypeCheck(baw.RoundType == curAmmoType))
 									showFill = true;
 							}
-							if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is Derringer)
+							else if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is Derringer)
 							{
 								Derringer derringer = GM.CurrentMovementManager.Hands[i].CurrentInteractable as Derringer;
 								if (TypeCheck(derringer.RoundType == curAmmoType))
 									showFill = true;
 							}
-							if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is SingleActionRevolver)
+							else if (GM.CurrentMovementManager.Hands[i].CurrentInteractable is SingleActionRevolver)
 							{
 								SingleActionRevolver saRevolver = GM.CurrentMovementManager.Hands[i].CurrentInteractable as SingleActionRevolver;
 								if (TypeCheck(saRevolver.Cylinder.Chambers[0].RoundType == curAmmoType))
 									showFill = true;
 							}
-							if (GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chamber") != null) //handles most guns
+
+							if (!showFill && GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chamber") != null) //handles most guns
 							{
 								FVRFireArmChamber Chamber = (FVRFireArmChamber)GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chamber").GetValue(GM.CurrentMovementManager.Hands[i].CurrentInteractable);
 								if (TypeCheck(fvrfireArm.RoundType == curAmmoType))
 									showFill = true;
 							}
-							if (GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers") != null) //handles Revolver, LAPD2019, RevolvingShotgun
+							else if (!showFill && GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers") != null) //handles Revolver, LAPD2019, RevolvingShotgun
 							{
 								FVRFireArmChamber[] Chambers = (FVRFireArmChamber[])GM.CurrentMovementManager.Hands[i].CurrentInteractable.GetType().GetField("Chambers").GetValue(GM.CurrentMovementManager.Hands[i].CurrentInteractable);
 								if (TypeCheck(Chambers[0].RoundType == curAmmoType))

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx;
@@ -68,6 +69,26 @@ namespace Cursed.UnlockAll
                             return extSpawnerIds.ToArray();
                         }))
                 .InstructionEnumeration();
+        }
+
+        [HarmonyPatch(typeof(IM), "GenerateItemDBs")]
+        [HarmonyPrefix]
+        public static bool AddUncategorizedSubCategory(IM __instance)
+        {
+            ItemSpawnerCategoryDefinitions.SubCategory subcat = new ItemSpawnerCategoryDefinitions.SubCategory
+            {
+                Subcat = ItemSpawnerID.ESubCategory.None,
+                DisplayName = "UNCATEGORIZED",
+                DoesDisplay_Sandbox = true,
+                DoesDisplay_Unlocks = true,
+                Sprite = null
+            };
+
+            List<ItemSpawnerCategoryDefinitions.SubCategory> subcats = __instance.CatDefs.Categories[6].Subcats.ToList();
+            subcats.Add(subcat);
+            __instance.CatDefs.Categories[6].Subcats = subcats.ToArray();
+            
+            return true;
         }
 
         [HarmonyPatch(typeof(RewardUnlocks), nameof(RewardUnlocks.IsRewardUnlocked), typeof(string))]
