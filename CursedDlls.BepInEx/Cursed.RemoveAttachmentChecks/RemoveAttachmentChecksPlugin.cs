@@ -16,12 +16,15 @@ namespace Cursed.RemoveAttachmentChecks
     [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.2")]
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _allAttachmentsAreScalable;
         private static ConfigEntry<bool> _removeAttachmentsAtAnyTime;
         private static ConfigEntry<bool> _enableBiDirectionalAttachments;
         private static ConfigEntry<bool> _typeChecksDisabled;
 
         private void Awake()
         {
+            _allAttachmentsAreScalable = Config.Bind("General", "AllAttachmentsAreScalable", false,
+                "Allows all attachments to be scalable, regardless of if it should be able to scale to its mount.");
             _removeAttachmentsAtAnyTime = Config.Bind("General", "RemoveAttachmentsAtAnyTime", false,
                 "Allows the removal of attachments even when other attachments are on that attachment. Warning: becomes very janky when it comes to muzzle devices!");
             _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", true,
@@ -88,10 +91,18 @@ namespace Cursed.RemoveAttachmentChecks
 
         [HarmonyPatch(typeof(FVRFireArmAttachmentInterface), nameof(FVRFireArmAttachmentInterface.HasAttachmentsOnIt))]
         [HarmonyPrefix]
-        public static bool FVRFireArmAttachmentInterface_HasAttachmentsOnIt(FVRFireArmAttachment __instance, ref bool __result)
+        public static bool FVRFireArmAttachmentInterface_HasAttachmentsOnIt(FVRFireArmAttachmentInterface __instance, ref bool __result)
         {
             __result = false;
             return !_removeAttachmentsAtAnyTime.Value;
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmAttachmentMount), nameof(FVRFireArmAttachmentMount.CanThisRescale))]
+        [HarmonyPrefix]
+        public static bool FVRFireArmAttachmentMount_CanThisRescale(FVRFireArmAttachmentMount __instance, ref bool __result)
+        {
+            __result = true;
+            return !_allAttachmentsAreScalable.Value;
         }
 
         [HarmonyPatch(typeof(FVRFireArmAttachment), "AttachToMount")]
