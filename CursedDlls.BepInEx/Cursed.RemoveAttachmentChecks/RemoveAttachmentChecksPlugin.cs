@@ -17,6 +17,7 @@ namespace Cursed.RemoveAttachmentChecks
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _allAttachmentsAreScalable;
+        private static ConfigEntry<bool> _easyAttachmentAttaching;
         private static ConfigEntry<bool> _removeAttachmentsAtAnyTime;
         private static ConfigEntry<bool> _enableBiDirectionalAttachments;
         private static ConfigEntry<bool> _typeChecksDisabled;
@@ -27,6 +28,8 @@ namespace Cursed.RemoveAttachmentChecks
                 "Allows all attachments to be scalable, regardless of if it should be able to scale to its mount.");
             _removeAttachmentsAtAnyTime = Config.Bind("General", "RemoveAttachmentsAtAnyTime", false,
                 "Allows the removal of attachments even when other attachments are on that attachment. Warning: becomes very janky when it comes to muzzle devices!");
+            _easyAttachmentAttaching = Config.Bind("General", "EasyAttachmentAttaching", false,
+                "Similar to easy magazine loading, but for attachments! You have the range between the muzzle point and hand radially, so there should be ample space to make stupid stuff.");
             _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", true,
                 "Enables attachments to be placed in any direction on rails. (For example, backwards muzzle devices)");
             _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
@@ -71,7 +74,7 @@ namespace Cursed.RemoveAttachmentChecks
         [HarmonyPrefix]
         public static bool FVRFireArmAttachment_UpdateSnappingBasedOnDistance(FVRFireArmAttachment __instance)
         {
-            if (GM.Options.ControlOptions.UseEasyMagLoading && __instance.m_hand.OtherHand.CurrentInteractable != null && __instance.m_hand.OtherHand.CurrentInteractable is FVRFireArm)
+            if (_easyAttachmentAttaching.Value && __instance.m_hand.OtherHand.CurrentInteractable != null && __instance.m_hand.OtherHand.CurrentInteractable is FVRFireArm)
             {
                 FVRFireArm fvrfireArm = __instance.m_hand.OtherHand.CurrentInteractable as FVRFireArm;
                 float handToMuzzle = Vector3.Distance(__instance.m_hand.OtherHand.transform.position, fvrfireArm.CurrentMuzzle.position) + 0.25f;
