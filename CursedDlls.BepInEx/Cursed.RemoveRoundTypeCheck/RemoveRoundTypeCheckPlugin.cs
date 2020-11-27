@@ -55,6 +55,16 @@ namespace Cursed.RemoveRoundTypeCheck
 		 * Type patches
 		 * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
 		 */
+
+		[HarmonyPatch(typeof(FVRFireArmRound), "Awake")]
+		[HarmonyPrefix]
+		public static bool AddChamberableToRound(FVRFireArmRound __instance)
+		{
+			__instance.isManuallyChamberable = true;
+			return true;
+		}
+
+
 		[HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
 		[HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
 		[HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]

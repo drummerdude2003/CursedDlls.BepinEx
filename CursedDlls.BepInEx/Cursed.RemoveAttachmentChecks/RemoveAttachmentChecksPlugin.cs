@@ -43,11 +43,22 @@ namespace Cursed.RemoveAttachmentChecks
             return condition || _typeChecksDisabled.Value;
         }
 
-        /*
+		/*
          * Type patches
          * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
          */
-        [HarmonyPatch(typeof(FVRFireArmAttachmentSensor), "OnTriggerEnter")]
+
+		[HarmonyPatch(typeof(Revolver), "Awake")]
+		[HarmonyPrefix]
+		public static bool AddSuppressorAttachableToRevolver(Revolver __instance)
+		{
+			//tbh this really shouldn't even be done, i don't think any of the revolvers actually actually have supressed rounds. However, I don't care!
+			__instance.AllowsSuppressor = true;
+			return true;
+		}
+
+		
+		[HarmonyPatch(typeof(FVRFireArmAttachmentSensor), "OnTriggerEnter")]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> PatchAttachmentTypeCheckTranspiler(IEnumerable<CodeInstruction> instrs)
         {
