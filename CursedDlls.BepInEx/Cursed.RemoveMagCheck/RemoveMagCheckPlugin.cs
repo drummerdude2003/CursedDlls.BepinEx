@@ -12,10 +12,10 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.2")]
+[assembly: AssemblyVersion("1.3")]
 namespace RemoveMagCheck
 {
-    [BepInPlugin("dll.cursed.removemagcheck", "CursedDlls - Remove Magazine (and clip) Checks", "1.2")]
+    [BepInPlugin("dll.cursed.removemagcheck", "CursedDlls - Remove Magazine (and clip) Checks", "1.3")]
     public class RemoveMagCheckPlugin : BaseUnityPlugin
     {
         public static ManualLogSource Logger { get; set; }

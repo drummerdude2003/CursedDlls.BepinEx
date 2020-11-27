@@ -11,10 +11,10 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.2")]
+[assembly: AssemblyVersion("1.3")]
 namespace Cursed.UnlockAll
 {
-    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.2")]
+    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.3")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _overwriteRewardsTxt;
