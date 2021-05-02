@@ -12,10 +12,10 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.3")]
+[assembly: AssemblyVersion("1.4")]
 namespace Cursed.RemoveRoundTypeCheck
 {
-	[BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.3")]
+	[BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.4")]
 	public class RemoveRoundTypeCheckPlugin : BaseUnityPlugin
 	{
 		public static ManualLogSource Logger { get; set; }

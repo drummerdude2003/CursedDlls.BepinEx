@@ -8,10 +8,10 @@ using HarmonyLib;
 using RUST.Steamworks;
 using Steamworks;
 
-[assembly: AssemblyVersion("1.3")]
+[assembly: AssemblyVersion("1.4")]
 namespace Cursed.SuppressAssemblyLoadErrors
 {
-    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.3")]
+    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.4")]
     public class SuppressAssemblyLoadErrors : BaseUnityPlugin
     {
         internal static ManualLogSource logger; 
@@ -34,17 +34,6 @@ namespace Cursed.SuppressAssemblyLoadErrors
                 __result = re.Types.Where(t => t != null).ToArray();
                 logger.LogDebug($"Encountered ReflectionTypeLoadException which was suppressed. Full error: \n${TypeLoader.TypeLoadExceptionToString(re)}");
             }
-        }
-
-        /*
-		 * Skiddie prevention
-		 */
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
-        [HarmonyPrefix]
-        public static bool HSM_UpdateScore()
-        {
-            return false;
         }
     }
 }

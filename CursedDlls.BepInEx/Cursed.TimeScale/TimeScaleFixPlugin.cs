@@ -10,10 +10,10 @@ using Steamworks;
 using UnityEngine;
 using Valve.VR;
 
-[assembly: AssemblyVersion("1.3")]
+[assembly: AssemblyVersion("1.4")]
 namespace Cursed.TimeScale
 {
-    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.3")]
+    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.4")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<float> _timeScaleIncrement;
@@ -68,8 +68,11 @@ namespace Cursed.TimeScale
             if (___m_isActive)
             {
                 __instance.Clock.text = $"Time Scale: {Time.timeScale.ToString(CultureInfo.InvariantCulture)}";
-                try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
-                catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
+                if (!String.IsNullOrEmpty(_wristMenuDateTimeFormat.Value))
+				{
+                    try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
+                    catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
+                }
             }
         }
 
