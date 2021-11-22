@@ -116,16 +116,5 @@ namespace Cursed.FullAuto
             __result = false;
             return false;
         }
-
-        /*
-		 * Skiddie prevention
-		 */
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
-        [HarmonyPrefix]
-        public static bool HSM_UpdateScore()
-        {
-            return false;
-        }
     }
 }

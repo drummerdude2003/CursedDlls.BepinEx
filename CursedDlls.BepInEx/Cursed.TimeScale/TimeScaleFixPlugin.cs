@@ -84,16 +84,5 @@ namespace Cursed.TimeScale
             __instance.Aud.pitch = 1f;
             __instance.Aud.PlayOneShot(__instance.AudClip_Engage, 1f);
         }
-
-        /*
-		 * Skiddie prevention
-		 */
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
-        [HarmonyPrefix]
-        public static bool HSM_UpdateScore()
-        {
-            return false;
-        }
     }
 }

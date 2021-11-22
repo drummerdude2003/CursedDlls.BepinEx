@@ -41,16 +41,5 @@ namespace Cursed.BetterBipods
                     new CodeInstruction(OpCodes.Ldc_R4, 0f))
                 .InstructionEnumeration();
         }
-
-        /*
-		 * Skiddie prevention
-		 */
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(string), typeof(int), typeof(Action<int, int>) })]
-        [HarmonyPatch(typeof(HighScoreManager), nameof(HighScoreManager.UpdateScore), new Type[] { typeof(SteamLeaderboard_t), typeof(int) })]
-        [HarmonyPrefix]
-        public static bool HSM_UpdateScore()
-        {
-            return false;
-        }
     }
 }
