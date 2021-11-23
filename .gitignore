@@ -1,3 +1,12 @@
+# These should be built, no need to include the folders in the repo
+Thunderstore/monomod
+Thunderstore/plugins
+Thunderstore/*.zip
+/*.zip
+
+# config.yaml doesn't need to be included
+Thunderstore/config.yaml
+
 .idea
 lib/*.dll
 

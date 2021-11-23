@@ -1,46 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net35</TargetFramework>
-    <!-- ignore .NET sdk generating one for us... -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net35</TargetFramework>
+		<!-- ignore .NET sdk generating one for us... -->
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<CopyLocalLocKFileAssemblies>false</CopyLocalLocKFileAssemblies>
+	</PropertyGroup>
 
-  <!-- output release binaries in a single directory -->
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<OutputPath>$(SolutionDir)..\bin\BepInEx\plugins\CursedDlls</OutputPath>
-    <DebugType>none</DebugType>
-  </PropertyGroup>
+	<!-- output release binaries in a single directory -->
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<OutputPath>$(SolutionDir)..\Thunderstore\plugins</OutputPath>
+		<DebugType>none</DebugType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>$(SolutionDir)..\lib\0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(SolutionDir)..\lib\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-		<Reference Include="Assembly-CSharp-firstpass">
-			<HintPath>$(SolutionDir)..\lib\Assembly-CSharp-firstpass.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-    <Reference Include="BepInEx">
-      <HintPath>$(SolutionDir)..\lib\BepInEx.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(SolutionDir)..\lib\UnityEngine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(SolutionDir)..\lib\UnityEngine.UI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
-  <!-- Import our commonized copy-to-game logic -->
-  <Import Project="$(SolutionDir)CursedDlls.CopyToGame.targets" />
+	<ItemGroup>
+		<PackageReference Include="BepInEx.Core" Version="5.4.16" />
+		<PackageReference Include="H3VR.GameLibs" Version="0.100.7-r.0" />
+		<PackageReference Include="UnityEngine" Version="5.6.1" />
+	</ItemGroup>
 
 </Project>
