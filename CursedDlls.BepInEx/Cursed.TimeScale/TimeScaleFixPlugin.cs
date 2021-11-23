@@ -16,17 +16,35 @@ namespace Cursed.TimeScale
     [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.4")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _pluginEnabled;
+
         private static ConfigEntry<float> _timeScaleIncrement;
         private static ConfigEntry<string> _wristMenuDateTimeFormat;
 
         private void Awake()
         {
+            _pluginEnabled = Config.Bind("General", "PluginEnabled", false,
+                "Enables TimeScaleFix. TimeScaleFix adds a few fixes for timescale editing, such as pitching game sounds and adding a timescale to the wrist menu.");
+
             _timeScaleIncrement = Config.Bind("General", "TimeScaleIncrement", 0.125f,
                 "How much time scale is increased/decreased at a time");
             _wristMenuDateTimeFormat = Config.Bind("General", "WristMenuDateTimeFormat", "hh:mm:ss tt",
                 "What the format of the wrist menu's clock is. Search for \"Custom date and time format strings\" to see the elligible characters you can use.");
 
-            Harmony.CreateAndPatchAll(typeof(TimeScaleFixPlugin));
+            if (_pluginEnabled.Value)
+            {
+                Harmony harmony = Harmony.CreateAndPatchAll(typeof(TimeScaleFixPlugin));
+
+                // stealing a bit of code from myself again
+                // if the wrist menu has an additional postfix it's someone else's patch, so just remove ours
+                MethodInfo FVRWristMenuUpdate = AccessTools.Method(typeof(FVRWristMenu), nameof(FVRWristMenu.Update));
+                if (FVRWristMenuUpdate != null)
+                {
+                    Patches wristUpdatePatches = Harmony.GetPatchInfo(FVRWristMenuUpdate);
+                    if (wristUpdatePatches.Postfixes.Count > 1)
+                        harmony.Unpatch(FVRWristMenuUpdate, HarmonyPatchType.All, harmony.Id);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(AudioSource), "pitch", MethodType.Setter)]
@@ -69,7 +87,7 @@ namespace Cursed.TimeScale
             {
                 __instance.Clock.text = $"Time Scale: {Time.timeScale.ToString(CultureInfo.InvariantCulture)}";
                 if (!String.IsNullOrEmpty(_wristMenuDateTimeFormat.Value))
-				{
+                {
                     try { __instance.Clock.text += $"\n{DateTime.Now.ToString(_wristMenuDateTimeFormat.Value)}"; }
                     catch { } //yes I know this is bad but if users want custom things in their wrist menu, let them
                 }
