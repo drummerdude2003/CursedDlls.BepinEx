@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
 using RUST.Steamworks;
@@ -17,9 +18,15 @@ namespace Cursed.FullAuto
         private static readonly FastInvokeHandler UpdateSafetyPos =
             MethodInvoker.GetHandler(AccessTools.Method(typeof(Handgun), "UpdateSafetyPos"));
 
+        private static ConfigEntry<bool> _pluginEnabled;
+
         private void Awake()
         {
-            Harmony.CreateAndPatchAll(typeof(FullAutoPlugin));
+            _pluginEnabled = Config.Bind("General", "PluginEnabled", false,
+                "Enables FullAuto. FullAuto makes all closed bolt rifles and handguns have a full auto safety setting.");
+
+            if (_pluginEnabled.Value)
+                Harmony.CreateAndPatchAll(typeof(FullAutoPlugin));
         }
 
         [HarmonyPatch(typeof(ClosedBoltWeapon), "Awake")]

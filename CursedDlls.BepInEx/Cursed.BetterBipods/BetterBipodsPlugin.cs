@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx;
+using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
 using RUST.Steamworks;
@@ -13,11 +14,17 @@ using UnityEngine;
 namespace Cursed.BetterBipods
 {
     [BepInPlugin("dll.cursed.betterbipods", "CursedDlls - Better Bipods", "1.4")]
-    public class BetterBipodsPlugin
+    public class BetterBipodsPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _pluginEnabled;
+
         private void Awake()
         {
-            Harmony.CreateAndPatchAll(typeof(BetterBipodsPlugin));
+            _pluginEnabled = Config.Bind("General", "PluginEnabled", false,
+                "Enables BetterBipods. With BetterBipods, bipods will have balanced recoil, more rearward than upward.");
+
+            if (_pluginEnabled.Value)
+                Harmony.CreateAndPatchAll(typeof(BetterBipodsPlugin));
         }
 
         [HarmonyPatch(typeof(FVRFireArmBipod), "UpdateBipod")]

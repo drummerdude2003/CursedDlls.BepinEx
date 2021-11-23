@@ -16,6 +16,8 @@ namespace Cursed.RemoveAttachmentChecks
     [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.4")]
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _pluginEnabled;
+
         private static ConfigEntry<bool> _allAttachmentsAreScalable;
         private static ConfigEntry<bool> _easyAttachmentAttaching;
         private static ConfigEntry<bool> _removeAttachmentsAtAnyTime;
@@ -24,18 +26,22 @@ namespace Cursed.RemoveAttachmentChecks
 
         private void Awake()
         {
+            _pluginEnabled = Config.Bind("General", "PluginEnabled", false,
+                "Enables RemoveAttachmentChecks. RemoveAttachmentChecks, as it says on the tin, removes a lot of checks related to attachments.");
+
             _allAttachmentsAreScalable = Config.Bind("General", "AllAttachmentsAreScalable", false,
                 "Allows all attachments to be scalable, regardless of if it should be able to scale to its mount.");
             _removeAttachmentsAtAnyTime = Config.Bind("General", "RemoveAttachmentsAtAnyTime", false,
                 "Allows the removal of attachments even when other attachments are on that attachment. Warning: becomes very janky when it comes to muzzle devices!");
             _easyAttachmentAttaching = Config.Bind("General", "EasyAttachmentAttaching", false,
                 "Similar to easy magazine loading, but for attachments! You have the range between the muzzle point and hand radially, so there should be ample space to make stupid stuff.");
-            _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", true,
+            _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", false,
                 "Enables attachments to be placed in any direction on rails. (For example, backwards muzzle devices)");
-            _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", true,
+            _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", false,
                 "Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
 
-            Harmony.CreateAndPatchAll(typeof(RemoveAttachmentChecksPlugin));
+            if (_pluginEnabled.Value)
+                Harmony.CreateAndPatchAll(typeof(RemoveAttachmentChecksPlugin));
         }
 
         public static bool TypeCheck(bool condition)
@@ -43,22 +49,22 @@ namespace Cursed.RemoveAttachmentChecks
             return condition || _typeChecksDisabled.Value;
         }
 
-		/*
+        /*
          * Type patches
          * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
          */
 
-		[HarmonyPatch(typeof(Revolver), "Awake")]
-		[HarmonyPrefix]
-		public static bool AddSuppressorAttachableToRevolver(Revolver __instance)
-		{
-			//tbh this really shouldn't even be done, i don't think any of the revolvers actually actually have supressed rounds. However, I don't care!
-			__instance.AllowsSuppressor = true;
-			return true;
-		}
+        [HarmonyPatch(typeof(Revolver), "Awake")]
+        [HarmonyPrefix]
+        public static bool AddSuppressorAttachableToRevolver(Revolver __instance)
+        {
+            //tbh this really shouldn't even be done, i don't think any of the revolvers actually actually have supressed rounds. However, I don't care!
+            __instance.AllowsSuppressor = true;
+            return true;
+        }
 
-		
-		[HarmonyPatch(typeof(FVRFireArmAttachmentSensor), "OnTriggerEnter")]
+        
+        [HarmonyPatch(typeof(FVRFireArmAttachmentSensor), "OnTriggerEnter")]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> PatchAttachmentTypeCheckTranspiler(IEnumerable<CodeInstruction> instrs)
         {
