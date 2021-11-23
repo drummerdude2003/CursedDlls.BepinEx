@@ -65,34 +65,14 @@ namespace FistVR
 			}
 		}
 
-		public void UpdateProxyDisplay()
+		public void UpdateProxyRenderers()
 		{
 			if (this.ProxyRounds.Count > 0)
 			{
-				if (base.IsHeld)
+				for (int i = 0; i < this.ProxyRounds.Count; i++)
 				{
-					Vector3 position = base.transform.position;
-					Vector3 a = -base.transform.forward * this.PalmingDimensions.z + -base.transform.up * this.PalmingDimensions.y;
-					for (int i = 0; i < this.ProxyRounds.Count; i++)
-					{
-						this.ProxyRounds[i].GO.transform.position = position + a * (float)(i + 2);
-						this.ProxyRounds[i].GO.transform.localRotation = Quaternion.identity;
-					}
-				}
-				else
-				{
-					Vector3 position2 = base.transform.position;
-					Vector3 a2 = -base.transform.up * this.PalmingDimensions.y;
-					for (int j = 0; j < this.ProxyRounds.Count; j++)
-					{
-						this.ProxyRounds[j].GO.transform.position = position2 + a2 * (float)(j + 2);
-						this.ProxyRounds[j].GO.transform.localRotation = Quaternion.identity;
-					}
-				}
-				for (int k = 0; k < this.ProxyRounds.Count; k++)
-				{
-					this.ProxyRounds[k].Filter.mesh = AM.GetRoundMesh(this.ProxyRounds[k].Type, this.ProxyRounds[k].Class);
-					this.ProxyRounds[k].Renderer.material = AM.GetRoundMaterial(this.ProxyRounds[k].Type, this.ProxyRounds[k].Class);
+					this.ProxyRounds[i].Filter.mesh = AM.GetRoundMesh(this.ProxyRounds[i].Type, this.ProxyRounds[i].Class);
+					this.ProxyRounds[i].Renderer.material = AM.GetRoundMaterial(this.ProxyRounds[i].Type, this.ProxyRounds[i].Class);
 				}
 			}
 		}

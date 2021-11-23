@@ -24,11 +24,8 @@ namespace FistVR
 			//the base keyword does not work for some strange reason, so this is copied from FVRPhysicalObject.DuplicateFromSpawnLock
 			GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.ObjectWrapper.GetGameObject(), this.Transform.position, this.Transform.rotation);
 			FVRPhysicalObject fvrObj = gameObject.GetComponent<FVRPhysicalObject>();
-			if (fvrObj is FVREntityProxy)
-			{
-				(fvrObj as FVREntityProxy).Data.PrimeDataLists((fvrObj as FVREntityProxy).Flags);
-			}
-			hand.ForceSetInteractable(fvrObj);
+			(fvrObj as FVREntityProxy)?.Data.PrimeDataLists((fvrObj as FVREntityProxy).Flags);
+			hand?.ForceSetInteractable(fvrObj);
 			fvrObj.SetQuickBeltSlot(null);
 			fvrObj.BeginInteraction(hand);
 
@@ -48,8 +45,6 @@ namespace FistVR
 			component.UpdateBulletDisplay();
 			return gameObject;
 		}
-
-		public float m_timeSinceRoundInserted;
 
 		public void AddRound(FireArmRoundClass rClass, bool makeSound, bool updateDisplay)
 		{

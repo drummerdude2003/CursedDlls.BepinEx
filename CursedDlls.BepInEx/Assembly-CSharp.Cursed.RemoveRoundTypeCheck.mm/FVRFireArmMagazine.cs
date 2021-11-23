@@ -7,8 +7,6 @@ namespace FistVR
 {
 	public class patch_FVRFireArmMagazine : FVRFireArmMagazine
 	{
-		public float m_timeSinceRoundInserted;
-
 		public void AddRound(FireArmRoundClass rClass, bool makeSound, bool updateDisplay)
 		{
 			if (this.m_numRounds < this.m_capacity)
@@ -26,7 +24,14 @@ namespace FistVR
 				{
 					if (this.FireArm != null)
 					{
-						this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 1f);
+						if (this.m_numRounds >= this.m_capacity)
+						{
+							this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 0.8f);
+						}
+						else
+						{
+							this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 1f);
+						}
 					}
 					else if (this.UsesOverrideInOut)
 					{
@@ -44,7 +49,7 @@ namespace FistVR
 			}
 		}
 
-		public void AddRound(FVRFireArmRound round, bool makeSound, bool updateDisplay)
+		public void AddRound(FVRFireArmRound round, bool makeSound, bool updateDisplay, bool animate)
 		{
 			if (this.m_numRounds < this.m_capacity)
 			{
@@ -61,17 +66,36 @@ namespace FistVR
 				{
 					if (this.FireArm != null)
 					{
-						this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 1f);
+						if (this.m_numRounds >= this.m_capacity)
+						{
+							this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 0.8f);
+						}
+						else
+						{
+							this.FireArm.PlayAudioEvent(FirearmAudioEventType.MagazineInsertRound, 1f);
+						}
+					}
+					else if (this.m_numRounds >= this.m_capacity)
+					{
+						SM.PlayCoreSoundOverrides(FVRPooledAudioType.Generic, this.Profile.MagazineInsertRound, base.transform.position, this.Profile.MagazineInsertRound.VolumeRange * 1f, this.Profile.MagazineInsertRound.PitchRange * 0.8f);
 					}
 					else
 					{
-						SM.PlayGenericSound(this.Profile.MagazineInsertRound, base.transform.position);
+						SM.PlayCoreSound(FVRPooledAudioType.Generic, this.Profile.MagazineInsertRound, base.transform.position);
 					}
 				}
 			}
 			if (updateDisplay)
 			{
 				this.UpdateBulletDisplay();
+			}
+			if (animate && this.m_canAnimate)
+			{
+				this.DisplayBullets[0].transform.position = round.transform.position;
+				this.DisplayBullets[0].transform.rotation = round.transform.rotation;
+				this.m_roundInsertionStartPos = round.transform.position;
+				this.m_roundInsertionStartRot = round.transform.rotation;
+				this.m_roundInsertionLerp = 0f;
 			}
 		}
 	}
