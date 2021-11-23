@@ -7,8 +7,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using FistVR;
 using HarmonyLib;
-using RUST.Steamworks;
-using Steamworks;
 using UnityEngine;
 
 [assembly: AssemblyVersion("1.4")]
@@ -17,61 +15,69 @@ namespace Cursed.UnlockAll
     [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.4")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
+        private static ConfigEntry<bool> _pluginEnabled;
+
         private static ConfigEntry<bool> _overwriteRewardsTxt;
 
         private void Awake()
         {
+            _pluginEnabled = Config.Bind("General", "PluginEnabled", false,
+                "Enables UnlockAll. UnlockAll treats every object in the spawner as unlocked, as well as adding every object in the game to the spawner.");
+
             _overwriteRewardsTxt = Config.Bind("General", "OverwriteRewardsTxt", false,
                 "Overwrites the contents of Rewards.txt with every unlocked object. Even if this is false, however, all reward items will show in the Item Spawner.");
 
-            Harmony.CreateAndPatchAll(typeof(UnlockAllPlugin));
+            if (_pluginEnabled.Value)
+                Harmony.CreateAndPatchAll(typeof(UnlockAllPlugin));
         }
 
-        [HarmonyPatch(typeof(IM), "GenerateItemDBs")]
+        public static ItemSpawnerID[] AddFVRObjects(FVRObject[] fvrObjects)
+        {
+            var objects = new List<FVRObject>(fvrObjects);
+            objects.Reverse();
+            var extSpawnerIds = new List<ItemSpawnerID>(Resources.LoadAll<ItemSpawnerID>("ItemSpawnerIDs"));
+            foreach (var itemSpawnerId in extSpawnerIds)
+            {
+                if (itemSpawnerId.MainObject != null)
+                    objects.Remove(itemSpawnerId.MainObject);
+                if (itemSpawnerId.SecondObject != null)
+                    objects.Remove(itemSpawnerId.SecondObject);
+            }
+
+            foreach (var fvrObject in objects)
+            {
+                if (fvrObject == null)
+                    continue;
+
+                var itemId = ScriptableObject.CreateInstance<ItemSpawnerID>();
+                itemId.DisplayName = fvrObject.DisplayName;
+                itemId.SubHeading = fvrObject.ItemID;
+                itemId.Category = ItemSpawnerID.EItemCategory.Misc;
+                itemId.SubCategory = ItemSpawnerID.ESubCategory.None;
+                itemId.ItemID = "zzz_" + fvrObject.ItemID + "_uncat";
+                itemId.MainObject = fvrObject;
+                itemId.Secondaries = new ItemSpawnerID[0];
+                itemId.ModTags = new List<string> { "All FVRObjects" };
+                itemId.UsesHugeSpawnPad = true;
+                extSpawnerIds.Add(itemId);
+            }
+
+            return extSpawnerIds.ToArray();
+        }
+
+        [HarmonyPatch(typeof(IM), nameof(IM.GenerateItemDBs))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> GenerateItemDBsTranspiler(IEnumerable<CodeInstruction> instrs)
         {
-            return new CodeMatcher(instrs)
-                .MatchForward(true,
+            return new CodeMatcher(instrs).MatchForward(false,
                     new CodeMatch(OpCodes.Ldstr, "ItemSpawnerIDs"),
                     new CodeMatch(OpCodes.Call))
-                .Advance(1)
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    Transpilers.EmitDelegate<Func<ItemSpawnerID[], FVRObject[], ItemSpawnerID[]>>(
-                        (spawnerIds, fvrObjects) =>
-                        {
-                            var objects = new List<FVRObject>(fvrObjects);
-                            objects.Reverse();
-                            var extSpawnerIds = new List<ItemSpawnerID>(spawnerIds);
-                            foreach (var itemSpawnerId in spawnerIds)
-                            {
-                                if (itemSpawnerId.MainObject != null)
-                                    objects.Remove(itemSpawnerId.MainObject);
-                                if (itemSpawnerId.SecondObject != null)
-                                    objects.Remove(itemSpawnerId.SecondObject);
-                            }
-
-                            foreach (var fvrObject in objects)
-                            {
-                                var itemId = ScriptableObject.CreateInstance<ItemSpawnerID>();
-                                itemId.DisplayName = fvrObject.DisplayName;
-                                itemId.SubHeading = fvrObject.ItemID;
-                                itemId.Category = ItemSpawnerID.EItemCategory.Misc;
-                                itemId.SubCategory = ItemSpawnerID.ESubCategory.Backpack;
-                                itemId.ItemID = fvrObject.ItemID;
-                                itemId.MainObject = fvrObject;
-                                itemId.Secondaries = new ItemSpawnerID[0];
-                                itemId.UsesHugeSpawnPad = true;
-                                extSpawnerIds.Add(itemId);
-                            }
-
-                            return extSpawnerIds.ToArray();
-                        }))
+                .SetInstructionAndAdvance(new CodeInstruction(OpCodes.Ldloc_S, 2)) // I don't like this way
+                .SetOperandAndAdvance(AccessTools.Method(typeof(UnlockAllPlugin), "AddFVRObjects"))
                 .InstructionEnumeration();
         }
 
-        [HarmonyPatch(typeof(IM), "GenerateItemDBs")]
+        [HarmonyPatch(typeof(IM), nameof(IM.GenerateItemDBs))]
         [HarmonyPrefix]
         public static bool AddUncategorizedSubCategory(IM __instance)
         {
@@ -87,7 +93,7 @@ namespace Cursed.UnlockAll
             List<ItemSpawnerCategoryDefinitions.SubCategory> subcats = __instance.CatDefs.Categories[6].Subcats.ToList();
             subcats.Add(subcat);
             __instance.CatDefs.Categories[6].Subcats = subcats.ToArray();
-            
+
             return true;
         }
 
@@ -95,13 +101,10 @@ namespace Cursed.UnlockAll
         [HarmonyPrefix]
         public static bool IsRewardUnlockedPrefix(RewardUnlocks __instance, ref bool __result, string ID)
         {
-            if (__instance.Rewards.Contains(ID) && _overwriteRewardsTxt.Value)
+            if (!__instance.Rewards.Contains(ID) && _overwriteRewardsTxt.Value)
             {
-                __instance.Rewards.Add(ID);
-                using (var writer = ES2Writer.Create("Rewards.txt"))
-                {
-                    __instance.SaveToFile(writer);
-                }
+                __instance.UnlockReward(ID);
+                GM.Rewards.SaveToFile();
             }
 
             __result = true;
