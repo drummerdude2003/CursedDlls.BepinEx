@@ -36,6 +36,9 @@ namespace Cursed.RemoveRoundTypeCheck
             _timeSinceRoundInsertedOverride = Config.Bind("General", "TimeSinceRoundInsertedOverride", 0.3f,
                 "Overrides how long it takes for a round to be inserted into a clip or magazine.");
 
+            // disable any leaderboards while the whole mod is loaded, just as a precaution
+            Sodalite.Api.LeaderboardAPI.LeaderboardDisabled.TakeLock();
+
             if (_pluginEnabled.Value)
                 Harmony.CreateAndPatchAll(typeof(RemoveRoundTypeCheckPlugin));
         }
