@@ -57,6 +57,8 @@ namespace Cursed.UnlockAll
                 itemId.ItemID = "zzz_" + fvrObject.ItemID + "_uncat";
                 itemId.MainObject = fvrObject;
                 itemId.Secondaries = new ItemSpawnerID[0];
+                itemId.Secondaries_ByStringID = new List<string>();
+                itemId.TutorialBlocks = new List<string>();
                 itemId.ModTags = new List<string> { "All FVRObjects" };
                 itemId.UsesHugeSpawnPad = true;
                 extSpawnerIds.Add(itemId);
