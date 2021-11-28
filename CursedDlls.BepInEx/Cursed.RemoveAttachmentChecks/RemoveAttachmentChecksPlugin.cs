@@ -10,10 +10,10 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.4")]
+[assembly: AssemblyVersion("1.5")]
 namespace Cursed.RemoveAttachmentChecks
 {
-    [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.4")]
+    [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.5")]
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

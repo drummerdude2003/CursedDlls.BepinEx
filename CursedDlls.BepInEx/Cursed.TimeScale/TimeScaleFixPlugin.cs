@@ -10,10 +10,10 @@ using Steamworks;
 using UnityEngine;
 using Valve.VR;
 
-[assembly: AssemblyVersion("1.4")]
+[assembly: AssemblyVersion("1.5")]
 namespace Cursed.TimeScale
 {
-    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.4")]
+    [BepInPlugin("dll.cursed.timescale", "CursedDlls - Time Scaler", "1.5")]
     public class TimeScaleFixPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;
