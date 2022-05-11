@@ -10,10 +10,10 @@ using RUST.Steamworks;
 using Steamworks;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5")]
+[assembly: AssemblyVersion("1.5.1")]
 namespace Cursed.BetterBipods
 {
-    [BepInPlugin("dll.cursed.betterbipods", "CursedDlls - Better Bipods", "1.5")]
+    [BepInPlugin("dll.cursed.betterbipods", "CursedDlls - Better Bipods", "1.5.1")]
     public class BetterBipodsPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

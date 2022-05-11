@@ -10,10 +10,10 @@ using Steamworks;
 using UnityEngine;
 using Valve.VR;
 
-[assembly: AssemblyVersion("1.5")]
+[assembly: AssemblyVersion("1.5.1")]
 namespace Cursed.LoadScene
 {
-    [BepInPlugin("dll.cursed.loadscene", "CursedDlls - Load Scene", "1.5")]
+    [BepInPlugin("dll.cursed.loadscene", "CursedDlls - Load Scene", "1.5.1")]
     public class LoadScenePlugin : BaseUnityPlugin
     {
         private static ConfigEntry<string> _sceneLoad1;

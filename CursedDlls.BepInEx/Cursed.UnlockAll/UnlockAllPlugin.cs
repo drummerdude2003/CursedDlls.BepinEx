@@ -9,10 +9,10 @@ using FistVR;
 using HarmonyLib;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5")]
+[assembly: AssemblyVersion("1.5.1")]
 namespace Cursed.UnlockAll
 {
-    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.5")]
+    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.5.1")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;
@@ -49,6 +49,14 @@ namespace Cursed.UnlockAll
                 if (fvrObject == null)
                     continue;
 
+                // these are explicitly excluded for the new Item Spawner's scene saving
+                // if they weren't, there's a chance it would save invalid ItemSpawnerIDs for entire scenes
+                // (e.g. the item spawners in TnH, Rotweiners, MF2)
+                if (fvrObject.Category == FVRObject.ObjectCategory.Uncategorized ||
+                    fvrObject.Category == FVRObject.ObjectCategory.VFX ||
+                    fvrObject.Category == FVRObject.ObjectCategory.SosigClothing)
+                    continue;
+
                 var itemId = ScriptableObject.CreateInstance<ItemSpawnerID>();
                 itemId.DisplayName = fvrObject.DisplayName;
                 itemId.SubHeading = fvrObject.ItemID;
@@ -59,7 +67,7 @@ namespace Cursed.UnlockAll
                 itemId.Secondaries = new ItemSpawnerID[0];
                 itemId.Secondaries_ByStringID = new List<string>();
                 itemId.TutorialBlocks = new List<string>();
-                itemId.ModTags = new List<string> { "All FVRObjects" };
+                itemId.ModTags = new List<string> { "UnlockAll - FVRObjects" };
                 itemId.UsesHugeSpawnPad = true;
                 extSpawnerIds.Add(itemId);
             }
