@@ -19,52 +19,7 @@ namespace FistVR
 
 		public List<ProxyRound> ProxyRounds;
 
-		public void AddProxy(FireArmRoundClass roundClass, FVRObject prefabWrapper)
-		{
-			patch_FVRFireArmRound.ProxyRound proxyRound = new patch_FVRFireArmRound.ProxyRound();
-			GameObject gameObject = new GameObject("Proxy");
-			proxyRound.GO = gameObject;
-			gameObject.transform.SetParent(base.transform);
-			proxyRound.Filter = gameObject.AddComponent<MeshFilter>();
-			proxyRound.Renderer = gameObject.AddComponent<MeshRenderer>();
-			proxyRound.Class = roundClass;
-			proxyRound.Type = prefabWrapper.GetGameObject().GetComponent<FVRFireArmRound>().RoundType;
-			proxyRound.ObjectWrapper = prefabWrapper;
-			this.ProxyRounds.Add(proxyRound);
-		}
-
-		public void PalmRound(FVRFireArmRound round, bool insertAtFront, bool updateDisplay, int addAtIndex = 0)
-		{
-			SM.PlayHandlingGrabSound(this.HandlingGrabSound, base.transform.position, false);
-			patch_FVRFireArmRound.ProxyRound proxyRound = new patch_FVRFireArmRound.ProxyRound();
-			GameObject gameObject = new GameObject("Proxy");
-			proxyRound.GO = gameObject;
-			gameObject.transform.SetParent(base.transform);
-			proxyRound.Filter = gameObject.AddComponent<MeshFilter>();
-			proxyRound.Renderer = gameObject.AddComponent<MeshRenderer>();
-			proxyRound.Class = round.RoundClass;
-			proxyRound.Type = round.RoundType;
-			proxyRound.ObjectWrapper = round.ObjectWrapper;
-			if (insertAtFront)
-			{
-				for (int i = this.ProxyRounds.Count - 1; i >= 1; i--)
-				{
-					this.ProxyRounds[i] = this.ProxyRounds[i - 1];
-				}
-				this.ProxyRounds[0] = proxyRound;
-			}
-			else
-			{
-				this.ProxyRounds.Add(proxyRound);
-			}
-			this.HoveredOverRound = null;
-			UnityEngine.Object.Destroy(round.gameObject);
-			if (updateDisplay)
-			{
-				this.UpdateProxyDisplay();
-			}
-		}
-
+		// this is left here as it's very unlikely to change ever
 		public void UpdateProxyRenderers()
 		{
 			if (this.ProxyRounds.Count > 0)

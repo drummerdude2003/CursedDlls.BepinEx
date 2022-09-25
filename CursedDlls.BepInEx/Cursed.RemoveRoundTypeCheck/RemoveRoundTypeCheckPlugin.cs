@@ -54,6 +54,176 @@ namespace Cursed.RemoveRoundTypeCheck
         }
 
         /*
+         * FVRLoadedRound expander
+         * Adds functionality to utilize the new round type field injected into FVRLoadedRound
+         */
+
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "AddRound", typeof(FireArmRoundClass), typeof(bool), typeof(bool))]
+        [HarmonyPatch(typeof(FVRFireArmClip), "AddRound", typeof(FireArmRoundClass), typeof(bool), typeof(bool))]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> AddRoundByClass(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs).MatchForward(false,
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(i => i.IsLdarg()),
+                new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "LR_Class"))
+            .Repeat(m =>
+            {
+                // the ultimate in code-deduplication coping
+                // in essence:
+                // get the local index
+                // get the FVRLoadedRound class we're using
+                // get the current type from the first ldfld
+                // add our patch
+
+                CodeInstruction ldloc = m.Instruction;
+                m.Advance(2);
+
+                Type loadedRoundType = (m.Operand as MemberInfo).DeclaringType;
+                Type currentType = null;
+
+                int savePos = m.Pos; // after the LR_Class stfld
+                m.Advance(-m.Pos);
+
+                if (m.Opcode == OpCodes.Ldarg_0)
+                {
+                    m.Advance(1);
+                    if (m.Opcode == OpCodes.Ldfld)
+                    {
+                        // hopefully get our type (Mag or Clip)
+                        currentType = (m.Operand as MemberInfo).DeclaringType;
+
+                        m.Advance(savePos) // remember, we have the +1 from the advance above
+                        .InsertAndAdvance(ldloc)
+                        .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                        .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(currentType, "RoundType")))
+                        .InsertAndAdvance(new CodeInstruction(OpCodes.Stfld, AccessTools.Field(loadedRoundType, "LR_Type")));
+                    }
+                    else
+                    {
+                        //Debug.Log($"NOT A LDFLD {m.Pos}!");
+                        m.Advance(savePos - 1);
+                    }
+                }
+                else
+                {
+                    //Debug.Log($"NOT A LDARG {m.Pos}!");
+                    m.Advance(savePos);
+                }
+            })
+            .InstructionEnumeration();
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "AddRound", typeof(FVRFireArmRound), typeof(bool), typeof(bool), typeof(bool))]
+        [HarmonyPatch(typeof(FVRFireArmClip), "AddRound", typeof(FVRFireArmRound), typeof(bool), typeof(bool))]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> AddRoundByRound(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs).MatchForward(false,
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(i => i.IsLdarg()),
+                new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "RoundClass"),
+                new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "LR_Class"))
+            .Repeat(m =>
+            {
+                CodeInstruction ldloc = m.Instruction;
+                m.Advance(2);
+                Type currentType = (m.Operand as MemberInfo).DeclaringType;
+                m.Advance(1);
+                Type loadedRoundType = (m.Operand as MemberInfo).DeclaringType;
+
+                m.Advance(1)
+                .InsertAndAdvance(ldloc)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(currentType, "RoundType")))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stfld, AccessTools.Field(loadedRoundType, "LR_Type")));
+
+            })
+            .InstructionEnumeration();
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmMagazine), "DuplicateFromSpawnLock")]
+        [HarmonyPatch(typeof(FVRFireArmClip), "DuplicateFromSpawnLock")]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> DuplicateFromSpawnLockRoundType(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs).MatchForward(false,
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(i => i.opcode == OpCodes.Ldelem_Ref),
+                new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "LR_Class"),
+                new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "LR_Class"))
+            .Repeat(m =>
+            {
+                CodeInstruction ldloc_iterator = m.Instruction; // ldloc.2
+                m.Advance(2);
+                Type loadedRoundType = (m.Operand as MemberInfo).DeclaringType;
+                m.Advance(-8);
+                CodeInstruction ldloc_component = m.Instruction; // ldloc.1
+                m.Advance(1);
+                FieldInfo LoadedRounds = (m.Operand as FieldInfo);
+
+                m.Advance(9)
+                // component.LoadedRounds[i].LR_Type = this.LoadedRounds[i].LR_Type;
+                .InsertAndAdvance(ldloc_component)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, LoadedRounds))
+                .InsertAndAdvance(ldloc_iterator)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldelem_Ref))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, LoadedRounds))
+                .InsertAndAdvance(ldloc_iterator)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldelem_Ref))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(loadedRoundType, "LR_Type")))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stfld, AccessTools.Field(loadedRoundType, "LR_Type")));
+            })
+            .InstructionEnumeration();
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmRound), "AddProxy")] // (FireArmRoundClass, FVRObject)
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> RoundAddProxy(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs).MatchForward(false,
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(i => i.IsLdarg()),
+                new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "Class"))
+            .Repeat(m =>
+            {
+                CodeInstruction ldloc_proxy = m.Instruction;
+
+                m.Advance(3)
+                .InsertAndAdvance(ldloc_proxy)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_2))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(AnvilAsset), nameof(AnvilAsset.GetGameObject))))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(GameObject), nameof(GameObject.GetComponent), null, new Type[] { typeof(FVRFireArmRound) })))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(FVRFireArmRound), "RoundType")))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stfld, AccessTools.Field(typeof(FVRFireArmRound.ProxyRound), "Type")));
+            })
+            .InstructionEnumeration();
+        }
+
+        [HarmonyPatch(typeof(FVRFireArmRound), "PalmRound")] // (FVRFireArmRound, bool, bool, int)
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> RoundPalmRound(IEnumerable<CodeInstruction> instrs)
+        {
+            return new CodeMatcher(instrs).MatchForward(false,
+                new CodeMatch(i => i.IsLdloc()),
+                new CodeMatch(i => i.IsLdarg()),
+                new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "RoundClass"),
+                new CodeMatch(i => i.opcode == OpCodes.Stfld && ((FieldInfo)i.operand).Name == "Class"))
+            .Repeat(m =>
+            {
+                CodeInstruction ldloc_proxy = m.Instruction;
+
+                m.Advance(4)
+                .InsertAndAdvance(ldloc_proxy)
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_1))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(FVRFireArmRound), "RoundType")))
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Stfld, AccessTools.Field(typeof(FVRFireArmRound.ProxyRound), "Type")));
+            })
+            .InstructionEnumeration();
+        }
+
+        /*
          * Type patches
          * Patch instructions that are simiilar to Type == Type to be TypeCheck(Type == Type)
          */
@@ -409,8 +579,6 @@ namespace Cursed.RemoveRoundTypeCheck
             //unlike MonoMod the base class can technically be retrived, but it's a PitA so again this is copied from FVRPhysicalObject.DuplicateFromSpawnLock
             GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(__instance.ObjectWrapper.GetGameObject(), __instance.Transform.position, __instance.Transform.rotation);
             FVRPhysicalObject fvrObj = gameObject.GetComponent<FVRPhysicalObject>();
-            if (fvrObj is FVREntityProxy)
-                (fvrObj as FVREntityProxy).Data.PrimeDataLists((fvrObj as FVREntityProxy).Flags);
 
             hand.ForceSetInteractable(fvrObj);
             fvrObj.SetQuickBeltSlot(null);
