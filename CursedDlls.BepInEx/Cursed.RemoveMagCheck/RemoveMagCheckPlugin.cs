@@ -46,6 +46,7 @@ namespace RemoveMagCheck
         [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.FVRFixedUpdate))]
         [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.UpdateInteraction))]
         [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.Release))]
+        [HarmonyPatch(typeof(FVRFireArmMagazine), nameof(FVRFireArmMagazine.ReleaseFromSecondarySlot))]
         [HarmonyPatch(typeof(FVRFireArmReloadTriggerMag), nameof(FVRFireArmReloadTriggerMag.OnTriggerEnter))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> PatchMagazineTypeChecksTranspiler(IEnumerable<CodeInstruction> instrs)
