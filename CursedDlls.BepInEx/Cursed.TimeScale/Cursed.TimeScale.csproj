@@ -16,8 +16,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BepInEx.Core" Version="5.4.16" />
-		<PackageReference Include="H3VR.GameLibs" Version="0.103.0-r.0" />
+		<PackageReference Include="BepInEx.Core" Version="5.4.17" />
+		<PackageReference Include="H3VR.GameLibs" Version="0.105.3" />
 		<PackageReference Include="UnityEngine" Version="5.6.1" />
 	</ItemGroup>
 
