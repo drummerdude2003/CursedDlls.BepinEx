@@ -11,19 +11,11 @@ The main benefits of this collection are
 
 ## Installation
 
-Requirements are:
+CursedDLLs is on [Thunderstore](https://h3vr.thunderstore.io/package/Potatoes/CursedDLLs/), which means you can install it easy as pie alongside hundreds of other mods using [r2modman](https://h3vr.thunderstore.io/package/ebkr/r2modman/).
 
-* [BepInEx 5.2 or newer](https://github.com/BepInEx/BepInEx/releases)
-* [BepInEx.MonoMod.Loader](https://github.com/BepInEx/BepInEx.MonoMod.Loader/releases)
-* [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases)
+### Manual guide:
 
-### For the impatient:
-
-![Installation guide as GIF](install.gif)
-
-### Full guide:
-
-To install, do the following:
+To manually install, do the following:
 
 1. Grab latest version of BepInEx [from releases](https://github.com/BepInEx/BepInEx/releases). Pick the `x64` version.
 2. Extract the downloaded zip into H3VR game folder (`<STEAM folder>/steamapps/common/H3VR`) so that `winhttp.dll` is next to `h3vr.exe`
@@ -34,7 +26,7 @@ To install, do the following:
 
          Enabled = true
          ```
-3. Download latest set of Cursed.dll plugins from [releases](https://github.com/drummerdude2003/CursedDlls.BepinEx/releases)
+3. Download latest release of the plugins from [releases](https://github.com/drummerdude2003/CursedDlls.BepinEx/releases)
 4. Open the downloaded zip. Extract the downloaded zip into your **H3VR** folder. If you did it correctly, you should now have `CursedDlls` folder in the `BepInEx/plugins` folder.
 5. Download BepInEx.MonoMod.Loader from its [releases](https://github.com/BepInEx/BepInEx.MonoMod.Loader/releases) and extract the zip into your **H3VR** folder. If you did it correctly, you should now have a `monomod` folder in `BepInEx`.
 6. Download BepInEx.ConfigurationManager from its [releases](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) and extract the zip into your **H3VR** folder. If you did it correctly, you should now have a `ConfigurationManager.dll` file in `BepInEx/plugins`.
@@ -92,19 +84,17 @@ Enables proper support for tools like [ConfigManager](https://github.com/BepInEx
 
 Allows to slow down time using the snapturning buttons in the wrist menu. When time is slowed down, sounds are pitched down as well.
 
-You can edit the amount by which time is slowed down with a single click by editing the configuration file at 
-`<H3VR folder>/BepInEx/config/dll.cursed.timescale.cfg` (you need to run the game at least once for it to be generated.)
+You can edit the amount by which time is slowed down with a single click by editing the `dll.cursed.timescale.cfg` configuration file (you need to run the game at least once for it to be generated.)
 
 #### `Cursed.UnlockAll` -- unlocks all Rewards, puts non-item spawner items into the item spawner
 
 Should be rather explanatory, have fun. All objects are found under Misc->Backpacks.
 
-You can choose to overwrite your Rewards.txt contents by editing the configuration file at 
-`<H3VR folder>/BepInEx/config/dll.cursed.unlockall.cfg` (again, you need to run the game at least once for it to be generated.)
+You can choose to overwrite your Rewards.txt contents by editing the `dll.cursed.unlockall.cfg` configuration file (again, you need to run the game at least once for it to be generated.)
 
 ## Credits
 
-* [drummerdude2003](https://github.com/drummerdude2003) -- original work
+* [drummerdude2003](https://github.com/drummerdude2003) -- original porting work
 * [denikson](https://github.com/denikson) -- help with porting patches over to Harmony
-* [BlockBuilder57](https://github.com/BlockBuilder57) -- improvements to existing patches and some new type checking patches
+* [BlockBuilder57](https://github.com/BlockBuilder57) -- original creator, current maintainer
 * [modeco80](https://github.com/modeco80) -- developed MSBuild targets to automatically copy the plugins to the proper directories
