@@ -191,6 +191,7 @@ namespace Cursed.RemoveRoundTypeCheck
                 CodeInstruction ldloc_proxy = m.Instruction;
 
                 m.Advance(3)
+                // proxyRound.Type = prefabWrapper.GetGameObject().GetComponent<FVRFireArmRound>().RoundType;
                 .InsertAndAdvance(ldloc_proxy)
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_2))
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(AnvilAsset), nameof(AnvilAsset.GetGameObject))))
@@ -332,16 +333,16 @@ namespace Cursed.RemoveRoundTypeCheck
         [HarmonyPatch(typeof(FVRFireArmClip), nameof(FVRFireArmClip.UpdateInteraction))]
         [HarmonyPatch(typeof(Speedloader), nameof(Speedloader.UpdateInteraction))]
         [HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.UpdateInteraction))]
+        [HarmonyPatch(typeof(FVRFireArmRound), nameof(FVRFireArmRound.OnTriggerEnter))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> MaxPalmedAmountOverride(IEnumerable<CodeInstruction> instrs)
         {
             return new CodeMatcher(instrs).MatchForward(false,
-                new CodeMatch(i => i.opcode == OpCodes.Castclass && ((Type)i.operand) == typeof(FVRFireArmRound)),
                 new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "MaxPalmedAmount"),
                 new CodeMatch(i => i.opcode == OpCodes.Bge || i.opcode == OpCodes.Bge_S))
             .Repeat(m =>
             {
-                m.Advance(2)
+                m.Advance(1)
                 .InsertAndAdvance(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RemoveRoundTypeCheckPlugin), "PalmAmount")))
                 .SetOpcodeAndAdvance(OpCodes.Brfalse);
             })
@@ -392,7 +393,7 @@ namespace Cursed.RemoveRoundTypeCheck
         {
             return new CodeMatcher(instrs).MatchForward(false,
                 new CodeMatch(i => i.opcode == OpCodes.Callvirt && ((MethodInfo)i.operand).Name.Contains("TimeSinceRoundInserted")),
-                new CodeMatch(i => i.opcode == OpCodes.Ldc_R4),
+                new CodeMatch(i => i.IsLdloc() || i.opcode == OpCodes.Ldc_R4),
                 new CodeMatch(i => i.opcode == OpCodes.Ble_Un || i.opcode == OpCodes.Ble_Un_S))
             .Repeat(m =>
             {
