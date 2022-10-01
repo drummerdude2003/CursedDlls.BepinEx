@@ -9,10 +9,9 @@ using FistVR;
 using HarmonyLib;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5.1")]
 namespace Cursed.UnlockAll
 {
-    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.5.1")]
+    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.6")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

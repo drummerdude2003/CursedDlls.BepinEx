@@ -8,10 +8,9 @@ using HarmonyLib;
 using RUST.Steamworks;
 using Steamworks;
 
-[assembly: AssemblyVersion("1.5.1")]
 namespace Cursed.SuppressAssemblyLoadErrors
 {
-    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.5.1")]
+    [BepInPlugin("dll.cursed.suppressassemblyloaderrors", "CursedDlls - Suppress Assembly.GetTypes errors", "1.6")]
     public class SuppressAssemblyLoadErrors : BaseUnityPlugin
     {
         internal static ManualLogSource logger; 
