@@ -54,18 +54,20 @@ namespace Cursed.TimeScale
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.TurnClockWise))]
+        [HarmonyPatch(typeof(FVRWristMenuSection_MoveMode), nameof(FVRWristMenuSection_MoveMode.BTN_TurnClockwise))]
         [HarmonyPrefix]
-        public static bool IncreaseTimeScale(FVRWristMenu __instance)
+        public static bool IncreaseTimeScale()
         {
-            DiffTimeScale(__instance, +1);
+            DiffTimeScale(+1);
             return false;
         }
 
         [HarmonyPatch(typeof(FVRWristMenu), nameof(FVRWristMenu.TurnCounterClockWise))]
+        [HarmonyPatch(typeof(FVRWristMenuSection_MoveMode), nameof(FVRWristMenuSection_MoveMode.BTM_TurnCounterClockwise))]
         [HarmonyPrefix]
-        public static bool DecreaseTimeScale(FVRWristMenu __instance)
+        public static bool DecreaseTimeScale()
         {
-            DiffTimeScale(__instance, -1);
+            DiffTimeScale(-1);
             return false;
         }
 
@@ -93,13 +95,12 @@ namespace Cursed.TimeScale
             }
         }
 
-        private static void DiffTimeScale(FVRWristMenu __instance, int dir)
+        private static void DiffTimeScale(int dir)
         {
             Time.timeScale += _timeScaleIncrement.Value * dir;
             Time.fixedDeltaTime = Time.timeScale / SteamVR.instance.hmd_DisplayFrequency;
             Time.timeScale = Mathf.Clamp(Time.timeScale, 0f, 1f);
-            __instance.Aud.pitch = 1f;
-            __instance.Aud.PlayOneShot(__instance.AudClip_Engage, 1f);
+            SM.PlayGlobalUISound(SM.GlobalUISound.Beep, GM.CurrentPlayerBody.Head.position);
         }
     }
 }
