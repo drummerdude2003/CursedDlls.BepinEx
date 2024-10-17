@@ -9,6 +9,7 @@ namespace FistVR
 	{
 		public class FVRLoadedRound
 		{
+			[System.NonSerialized]
 			public FireArmRoundType LR_Type;
 			public FireArmRoundClass LR_Class;
 			public Mesh LR_Mesh;
