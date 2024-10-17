@@ -37,7 +37,7 @@ namespace Cursed.RemoveAttachmentChecks
             _enableBiDirectionalAttachments = Config.Bind("General", "EnableBiDirectionalAttachments", false,
                 "Enables attachments to be placed in any direction on rails. (For example, backwards muzzle devices)");
             _typeChecksDisabled = Config.Bind("General", "TypeChecksDisabled", false,
-                "Disables type checking on rounds. This lets you insert any round you want into any gun, magazine, clip, speedloader, or collection of palmed rounds.");
+                "Disables type checking on attachments. This lets you put any kind of attachment on any attachment point, regardless of type.");
 
             if (_pluginEnabled.Value)
                 Harmony.CreateAndPatchAll(typeof(RemoveAttachmentChecksPlugin));

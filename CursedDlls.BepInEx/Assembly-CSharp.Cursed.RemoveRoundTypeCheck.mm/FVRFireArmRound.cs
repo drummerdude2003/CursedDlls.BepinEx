@@ -19,15 +19,24 @@ namespace FistVR
 
 		public List<ProxyRound> ProxyRounds;
 
-		// this is left here as it's very unlikely to change ever
 		public void UpdateProxyRenderers()
 		{
 			if (this.ProxyRounds.Count > 0)
 			{
 				for (int i = 0; i < this.ProxyRounds.Count; i++)
 				{
-					this.ProxyRounds[i].Filter.mesh = AM.GetRoundMesh(this.ProxyRounds[i].Type, this.ProxyRounds[i].Class);
-					this.ProxyRounds[i].Renderer.material = AM.GetRoundMaterial(this.ProxyRounds[i].Type, this.ProxyRounds[i].Class);
+					FireArmRoundType rType = this.ProxyRounds[i].Type;
+					FireArmRoundClass rClass = this.ProxyRounds[i].Class;
+
+					// A problem occurs when a user has CursedDLLs installed, but RemoveRoundTypeCheck is not enabled
+					// Overwriting this function means the game expects ProxyRound.Type to actually be populated - which would not be the case if the above is true.
+					// We can do a basic check here to see if rType is unset, and if it is, let's just get it from the plain FVRFireArmRound.RoundType.
+					// This should not cause any issue even for 22LR, as it will just get the expected round type.
+					if (rType == 0)
+						rType = this.RoundType;
+
+					this.ProxyRounds[i].Filter.mesh = AM.GetRoundMesh(rType, rClass);
+					this.ProxyRounds[i].Renderer.material = AM.GetRoundMaterial(rType, rClass);
 				}
 			}
 		}

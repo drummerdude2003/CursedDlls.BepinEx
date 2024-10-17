@@ -40,6 +40,8 @@ namespace Cursed.RemoveRoundTypeCheck
 
             if (_pluginEnabled.Value)
                 Harmony.CreateAndPatchAll(typeof(RemoveRoundTypeCheckPlugin));
+            else
+                Harmony.CreateAndPatchAll(typeof(AMPatches));
         }
 
         public static bool TypeCheck(bool condition)
@@ -56,7 +58,6 @@ namespace Cursed.RemoveRoundTypeCheck
          * FVRLoadedRound expander
          * Adds functionality to utilize the new round type field injected into FVRLoadedRound
          */
-
         [HarmonyPatch(typeof(FVRFireArmMagazine), "AddRound", typeof(FireArmRoundClass), typeof(bool), typeof(bool))]
         [HarmonyPatch(typeof(FVRFireArmClip), "AddRound", typeof(FireArmRoundClass), typeof(bool), typeof(bool))]
         [HarmonyTranspiler]
@@ -618,7 +619,7 @@ namespace Cursed.RemoveRoundTypeCheck
 
                             if (loader.Chambers[i].IsSpent)
                                 __instance.Revolver.Chambers[i].Fire();
-                            
+
                             flag = true;
                         }
                     }
@@ -722,33 +723,63 @@ namespace Cursed.RemoveRoundTypeCheck
             return false;
         }
 
-        /*
-         * AM patches
-         * These keeps the game from falling apart if you make something stupid like a FMJ shotgun shell
-         * If you stumble across a .45 ACP FMJ out of nowhere, this is why
-         */
-        [HarmonyPatch(typeof(AM), nameof(AM.getRoundMaterial))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundMaterial(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Material __result)
+        class AMPatches
         {
-            try { __result = ___TypeDic[rType][rClass].Material; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Material; return false; }
-        }
+            /*
+             * AM patches
+             * These keeps the game from falling apart if you make something stupid like a FMJ shotgun shell
+             * If you stumble across a Degle round out of nowhere, this is why
+             */
+            [HarmonyPatch(typeof(AM), nameof(AM.getRoundMaterial))]
+            [HarmonyPrefix]
+            public static bool AM_getRoundMaterial(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Material __result)
+            {
+                try
+                {
+                    __result = ___TypeDic[rType][rClass].Material;
+                    return false;
+                }
+                catch
+                {
+                    Debug.LogError($"Attempted to spawn round with rType {rType} and rClass {rClass} - AM doesn't have this!");
+                    __result = ___TypeDic[FireArmRoundType.a50_Imaginary][FireArmRoundClass.NERMAL].Material;
+                    return false;
+                }
+            }
 
-        [HarmonyPatch(typeof(AM), nameof(AM.getRoundMesh))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundMesh(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Mesh __result)
-        {
-            try { __result = ___TypeDic[rType][rClass].Mesh; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].Mesh; return false; }
-        }
+            [HarmonyPatch(typeof(AM), nameof(AM.getRoundMesh))]
+            [HarmonyPrefix]
+            public static bool AM_getRoundMesh(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref Mesh __result)
+            {
+                try
+                {
+                    __result = ___TypeDic[rType][rClass].Mesh;
+                    return false;
+                }
+                catch
+                {
+                    Debug.LogError($"Attempted to spawn round with rType {rType} and rClass {rClass} - AM doesn't have this!");
+                    __result = ___TypeDic[FireArmRoundType.a50_Imaginary][FireArmRoundClass.NERMAL].Mesh;
+                    return false;
+                }
+            }
 
-        [HarmonyPatch(typeof(AM), nameof(AM.getRoundSelfPrefab))]
-        [HarmonyPrefix]
-        public static bool AM_getRoundSelfPrefab(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref FVRObject __result)
-        {
-            try { __result = ___TypeDic[rType][rClass].ObjectID; return false; }
-            catch { __result = ___TypeDic[FireArmRoundType.a45_ACP][FireArmRoundClass.FMJ].ObjectID; return false; }
+            [HarmonyPatch(typeof(AM), nameof(AM.getRoundSelfPrefab))]
+            [HarmonyPrefix]
+            public static bool AM_getRoundSelfPrefab(FireArmRoundType rType, FireArmRoundClass rClass, Dictionary<FireArmRoundType, Dictionary<FireArmRoundClass, FVRFireArmRoundDisplayData.DisplayDataClass>> ___TypeDic, ref FVRObject __result)
+            {
+                try
+                {
+                    __result = ___TypeDic[rType][rClass].ObjectID;
+                    return false;
+                }
+                catch
+                {
+                    Debug.LogError($"Attempted to spawn round with rType {rType} and rClass {rClass} - AM doesn't have this!");
+                    __result = ___TypeDic[FireArmRoundType.a50_Imaginary][FireArmRoundClass.NERMAL].ObjectID;
+                    return false;
+                }
+            }
         }
     }
 }
