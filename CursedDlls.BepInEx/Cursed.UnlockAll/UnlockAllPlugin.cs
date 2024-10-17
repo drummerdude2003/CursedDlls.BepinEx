@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Cursed.UnlockAll
 {
-    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.6")]
+    [BepInPlugin("dll.cursed.unlockall", "CursedDlls - Unlock All Items", "1.7")]
     public class UnlockAllPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

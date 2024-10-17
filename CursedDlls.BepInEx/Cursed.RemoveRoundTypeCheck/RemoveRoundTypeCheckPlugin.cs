@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Cursed.RemoveRoundTypeCheck
 {
-    [BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.6")]
+    [BepInPlugin("dll.cursed.removeroundtypecheck", "CursedDlls - Remove RoundType Checks", "1.7")]
     public class RemoveRoundTypeCheckPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

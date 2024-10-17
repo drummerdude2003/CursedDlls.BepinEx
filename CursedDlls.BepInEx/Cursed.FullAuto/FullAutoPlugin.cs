@@ -11,7 +11,7 @@ using Steamworks;
 
 namespace Cursed.FullAuto
 {
-    [BepInPlugin("dll.cursed.fullauto", "CursedDlls - Full Auto", "1.6")]
+    [BepInPlugin("dll.cursed.fullauto", "CursedDlls - Full Auto", "1.7")]
     public class FullAutoPlugin : BaseUnityPlugin
     {
         private static readonly FastInvokeHandler UpdateSafetyPos =

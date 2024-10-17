@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Cursed.BetterBipods
 {
-    [BepInPlugin("dll.cursed.betterbipods", "CursedDlls - Better Bipods", "1.6")]
+    [BepInPlugin("dll.cursed.betterbipods", "CursedDlls - Better Bipods", "1.7")]
     public class BetterBipodsPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

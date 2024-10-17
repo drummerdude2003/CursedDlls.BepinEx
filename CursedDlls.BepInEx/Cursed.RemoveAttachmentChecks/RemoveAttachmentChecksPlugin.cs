@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Cursed.RemoveAttachmentChecks
 {
-    [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.6")]
+    [BepInPlugin("dll.cursed.removeattachmentchecks", "CursedDlls - Remove Attachment Checks", "1.7")]
     public class RemoveAttachmentChecksPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;

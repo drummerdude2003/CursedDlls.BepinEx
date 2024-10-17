@@ -12,7 +12,7 @@ using Valve.VR;
 
 namespace Cursed.LoadScene
 {
-    [BepInPlugin("dll.cursed.loadscene", "CursedDlls - Load Scene", "1.6")]
+    [BepInPlugin("dll.cursed.loadscene", "CursedDlls - Load Scene", "1.7")]
     public class LoadScenePlugin : BaseUnityPlugin
     {
         private static ConfigEntry<string> _sceneLoad1;

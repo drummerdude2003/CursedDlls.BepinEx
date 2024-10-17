@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace RemoveMagCheck
 {
-    [BepInPlugin("dll.cursed.removemagcheck", "CursedDlls - Remove Magazine (and clip) Checks", "1.6")]
+    [BepInPlugin("dll.cursed.removemagcheck", "CursedDlls - Remove Magazine (and clip) Checks", "1.7")]
     public class RemoveMagCheckPlugin : BaseUnityPlugin
     {
         private static ConfigEntry<bool> _pluginEnabled;
